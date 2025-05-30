@@ -3,7 +3,8 @@
 
 //tutorial on collision https://www.youtube.com/watch?v=uAfw-ko3kB8
 
-var floorArray = [];// array for floor
+var floorArray = [];
+var grass;
 var z,x,y;
 var bricks;
 var wallArray=[];
@@ -49,27 +50,12 @@ graphics = createGraphics(800,400);
  // ...existing code...
 var floorArray = []; // add this near wallArray
 
-function setup() {
-  // ...existing code...
-  // Add a floor under your maze
-  floorArray.push(new floor(0, 40, 0, 2000, 40, 2000)); // adjust size/position as needed
-  // ...existing code...
-}
 
-function draw() {
-  // ...existing code...
-  // Display all floors
-  for (let i = 0; i < floorArray.length; i++) {
-    floorArray[i].display();
-  }
-  // ...existing code...
-}
-}
+
 
 function draw() {
  background(120);
-  
- for (let i = 0; i < floorArray.length; i++) {
+  for (let i = 0; i < floorArray.length; i++) {
     floorArray[i].display();
   }
   //start sign creating a sign for the game start
