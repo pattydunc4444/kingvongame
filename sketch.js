@@ -3,7 +3,7 @@
 
 //tutorial on collision https://www.youtube.com/watch?v=uAfw-ko3kB8
 
-
+var floorArray = [];// array for floor
 var z,x,y;
 var bricks;
 var wallArray=[];
@@ -16,7 +16,8 @@ var dx,dz;
 let graphics, graphics2;
 
 function preload(){
-  bricks=loadImage("wallpaper.jpg");
+  bricks=loadImage("brick.jpg");
+  grass = loadImage("tileable-img_0062-verydark.png"); // 
 }
 
 
@@ -25,10 +26,11 @@ function setup() {
   y=0;
   x=0;
   z=0;
+   floorArray.push(new floor(0, 40, 0, 2000, 40, 2000)); 
   //sign graphics
 graphics = createGraphics(800,400);
   graphics2 = createGraphics(420,400);
-
+ 
 //bcam is a birds eye view that helps when placing blocks  
   bCam = createCamera();
     bCam.setPosition(0,-3000,200);
@@ -41,43 +43,43 @@ graphics = createGraphics(800,400);
   //wallArray.push(new wall(0,0,0));
   wallArray.push(new wall(400,0,400));
   for(let i=0;i<3;i++){
-    wallArray.push(new wall(400-400*i,0,-1200));
-  
+    wallArray.push(new wall(400-400*i,0,-1200,1));
+    wallArray.push(new wall(400-4*i,0,-800));
   }
-  //floorArray
-  // floorArray.push(new floor())
+ // ...existing code...
+var floorArray = []; // add this near wallArray
+
+function setup() {
+  // ...existing code...
+  // Add a floor under your maze
+  floorArray.push(new floor(0, 40, 0, 2000, 40, 2000)); // adjust size/position as needed
+  // ...existing code...
+}
+
+function draw() {
+  // ...existing code...
+  // Display all floors
+  for (let i = 0; i < floorArray.length; i++) {
+    floorArray[i].display();
+  }
+  // ...existing code...
+}
 }
 
 function draw() {
  background(120);
   
+ for (let i = 0; i < floorArray.length; i++) {
+    floorArray[i].display();
+  }
   //start sign creating a sign for the game start
   push();
-  noStroke();
-  translate(-400,0,550);
-  texture(graphics);
-  graphics.background(84, 80, 72);
-  graphics.fill(5);
-  graphics.textAlign(CENTER);
-  graphics.textSize(50); 
-  graphics.text('Use "wasd" to',400,150);
-  graphics.text('walk and',420,200);
-  graphics.text('left and right arrow to look',420,250);
-  graphics.text('Find the Gem',420,380);
-  plane(200,100);
+
   pop();
   
   //creating a sign for the game end
   push();
-  noStroke();
-  translate(0,0,-1600);
-  rotateY(-PI/2);
-  texture(graphics2);
-  graphics2.background(84, 80, 72);
-  graphics2.textAlign(CENTER);
-  graphics2.textSize(50); 
-  graphics2.text('You found the gem',200,50);
-  plane(220,200);
+ 
   pop();
 
  //maze building camera
@@ -95,13 +97,7 @@ frameRate(60);
   
   //creating the gem
   push();
-  noStroke();
-  translate(0,0,-1600);
-  specularMaterial(0, 255, 187);
-  shininess(1000);
-  rotateY(millis()/500);
-  rotateX(millis()/523);
-  sphere(50,16 ,3);
+  
   pop();
  
 
