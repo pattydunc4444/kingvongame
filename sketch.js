@@ -47,12 +47,13 @@ function setup() {
   cam.setPosition(400, 0, 800);
 
 
-  //maze creation
+  //the oblock building
   //wallArray.push(new wall(0,0,0));
-  wallArray.push(new wall(400, 0, 400));
+  // wallArray.push(new wall(400, 0, 400));
   for (let i = 0; i < 3; i++) {
-    wallArray.push(new wall(400 - 400 * i, 0, -1200, 1));
-    wallArray.push(new wall(400 - 4 * i, 0, -800));
+    // wallArray.push(new wall(400 - 400 * i, 0, -1200, 1));
+    wallArray.push(new wall(0 , 0, -800, 1200));
+    // wallArray.push(new wall(-400 , 0, -800, 100));
   }
   floorArray.push(new floor(0, 225, -400, 1200, 40, 2000)); // Add this line
 }
@@ -65,7 +66,7 @@ function draw() {
   // Draw skybox
   push();
   noStroke();
-  let size = 5000; // Make sure it's bigger than your whole scene
+  let size = 7000; // Make sure it's bigger than your whole scene
 
   // Right
   push();
