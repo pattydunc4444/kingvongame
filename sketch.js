@@ -15,10 +15,17 @@ var camAngle;
 let bCam;
 var dx, dz;
 let graphics, graphics2;
+let skyboxImgs = {};
 
 function preload() {
   bricks = loadImage("brick.jpg");
   grass = loadImage("thumbnail.jpg"); // 
+  skyboxImgs.right = loadImage('sky_right.jpg');
+  skyboxImgs.left = loadImage('sky_left.jpg');
+  skyboxImgs.top = loadImage('sky_top.jpg');
+  skyboxImgs.bottom = loadImage('sky_bottom.jpg');
+  skyboxImgs.front = loadImage('sky_front.jpg');
+  skyboxImgs.back = loadImage('sky_back.jpg');
 }
 
 
@@ -47,13 +54,68 @@ function setup() {
     wallArray.push(new wall(400 - 400 * i, 0, -1200, 1));
     wallArray.push(new wall(400 - 4 * i, 0, -800));
   }
-  floorArray.push(new floor(200, 225, -200, 1000, 40, 2000)); // Add this line
+  floorArray.push(new floor(0, 225, -400, 1200, 40, 2000)); // Add this line
 }
 
 
 
 function draw() {
   background(120);
+
+  // Draw skybox
+  push();
+  noStroke();
+  let size = 5000; // Make sure it's bigger than your whole scene
+
+  // Right
+  push();
+  translate(size/2, 0, 0);
+  rotateY(HALF_PI);
+  texture(skyboxImgs.right);
+  plane(size, size);
+  pop();
+
+  // Left
+  push();
+  translate(-size/2, 0, 0);
+  rotateY(-HALF_PI);
+  texture(skyboxImgs.left);
+  plane(size, size);
+  pop();
+
+  // Top
+  push();
+  translate(0, -size/2, 0);
+  rotateX(-HALF_PI);
+  texture(skyboxImgs.top);
+  plane(size, size);
+  pop();
+
+  // Bottom
+  push();
+  translate(0, size/2, 0);
+  rotateX(HALF_PI);
+  texture(skyboxImgs.bottom);
+  plane(size, size);
+  pop();
+
+  // Front
+  push();
+  translate(0, 0, -size/2);
+  texture(skyboxImgs.front);
+  plane(size, size);
+  pop();
+
+  // Back
+  push();
+  translate(0, 0, size/2);
+  rotateY(PI);
+  texture(skyboxImgs.back);
+  plane(size, size);
+  pop();
+
+  pop();
+
   for (let i = 0; i < floorArray.length; i++) {
     floorArray[i].display();
   }
