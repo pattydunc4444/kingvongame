@@ -16,6 +16,7 @@ let bCam;
 var dx, dz;
 let graphics, graphics2;
 let skyboxImgs = {};
+let crosshairGfx;
 
 function preload() {
   bricks = loadImage("brick.jpg");
@@ -52,10 +53,12 @@ function setup() {
   // wallArray.push(new wall(400, 0, 400));
   for (let i = 0; i < 3; i++) {
     // wallArray.push(new wall(400 - 400 * i, 0, -1200, 1));
-    wallArray.push(new wall(0 , 0, -800, 1200));
+    wallArray.push(new wall(0 , 0, -800, 1200,400,50));
     // wallArray.push(new wall(-400 , 0, -800, 100));
   }
   floorArray.push(new floor(0, 225, -400, 1200, 40, 2000)); // Add this line
+  crosshairGfx = createGraphics(windowWidth, windowHeight);
+  crosshairGfx.clear();
 }
 
 
@@ -197,4 +200,23 @@ function draw() {
   //cam.tilt(movedY*0.01);
   cam.move(x, 0, z);
   // console.log(cam.eyeZ);
+
+  // Draw crosshair on 2D graphics buffer
+  crosshairGfx.clear();
+  crosshairGfx.stroke(255);
+  crosshairGfx.strokeWeight(3);
+  let cx = crosshairGfx.width / 2;
+  let cy = crosshairGfx.height / 2;
+  crosshairGfx.line(cx - 10, cy, cx + 10, cy);
+  crosshairGfx.line(cx, cy - 10, cx, cy + 10);
+
+  // Overlay the crosshair on the WEBGL canvas
+  resetMatrix();
+  imageMode(CORNER);
+  image(crosshairGfx, 0, 0, width, height);
+}
+
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
+  crosshairGfx = createGraphics(windowWidth, windowHeight);
 }
