@@ -54,7 +54,8 @@ function setup() {
     wallArray.push(new wall(400 - 400 * i, 0, -1200, 1));
     wallArray.push(new wall(400 - 4 * i, 0, -800));
   }
-  floorArray.push(new floor(0, 225, -400, 1200, 40, 2000)); // Add this line
+  floorArray.push(new floor(0, 225, -400, 1200, 40, 2000)); //
+
 }
 
 
