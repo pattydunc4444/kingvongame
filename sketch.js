@@ -16,10 +16,12 @@ let bCam;
 var dx, dz;
 let graphics, graphics2;
 let skyboxImgs = {};
+let crosshairGfx;
 
 function preload() {
   bricks = loadImage("brick.jpg");
-  grass = loadImage("thumbnail.jpg"); // 
+  grass = loadImage("thumbnail.jpg"); // the concrete texture
+  concrete = loadImage("grass.jpg")
   skyboxImgs.right = loadImage('sky_right.jpg');
   skyboxImgs.left = loadImage('sky_left.jpg');
   skyboxImgs.top = loadImage('sky_top.jpg');
@@ -47,15 +49,19 @@ function setup() {
   cam.setPosition(400, 0, 800);
 
 
-  //maze creation
+  //the oblock building
   //wallArray.push(new wall(0,0,0));
-  wallArray.push(new wall(400, 0, 400));
+  // wallArray.push(new wall(400, 0, 400));
   for (let i = 0; i < 3; i++) {
-    wallArray.push(new wall(400 - 400 * i, 0, -1200, 1));
-    wallArray.push(new wall(400 - 4 * i, 0, -800));
+    // wallArray.push(new wall(400 - 400 * i, 0, -1200, 1));
+    wallArray.push(new wall(0 , 0, -1355, 1200,400,50,));
+     wallArray.push(new wall(0, 0, 550, 1200, 400,50));
+       wallArray.push(new wall(0, 0, 550, 1200, 400,50));
   }
-  floorArray.push(new floor(0, 225, -400, 1200, 40, 2000)); //
-
+  floorArray.push(new floor(0, 225, -400, 1200, 40, 2000)); // Grass floor
+  floorArray.push(new FloorConcrete(0, 230, 0, 7000, 40, 7000)); // Concrete floor, 5 units below, fits skybox
+  crosshairGfx = createGraphics(windowWidth, windowHeight);
+  crosshairGfx.clear();
 }
 
 
@@ -66,7 +72,7 @@ function draw() {
   // Draw skybox
   push();
   noStroke();
-  let size = 5000; // Make sure it's bigger than your whole scene
+  let size = 7000; // Make sure it's bigger than your whole scene
 
   // Right
   push();
@@ -132,7 +138,7 @@ function draw() {
   camAngle = 0;
   //player "flash light"
   pointLight(200, 200, 200, cam.eyeX, -200, cam.eyeZ);
-  ambientLight(5);
+  ambientLight(12);
 
   //creating the gem
   push();
@@ -197,4 +203,41 @@ function draw() {
   //cam.tilt(movedY*0.01);
   cam.move(x, 0, z);
   // console.log(cam.eyeZ);
+
+  // Draw crosshair on 2D graphics buffer
+  crosshairGfx.clear();
+  crosshairGfx.stroke(255);
+  crosshairGfx.strokeWeight(3);
+  let cx = crosshairGfx.width / 2;
+  let cy = crosshairGfx.height / 2;
+  crosshairGfx.line(cx - 10, cy, cx + 10, cy);
+  crosshairGfx.line(cx, cy - 10, cx, cy + 10);
+
+  // Overlay the crosshair on the WEBGL canvas
+  resetMatrix();
+  imageMode(CORNER);
+  image(crosshairGfx, 0, 0, width, height);
+}
+
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
+  crosshairGfx = createGraphics(windowWidth, windowHeight);
+}
+
+class FloorConcrete {
+  constructor(x, y, z, w, h, d) {
+    this.x = x;
+    this.y = y;
+    this.z = z;
+    this.w = w;
+    this.h = h;
+    this.d = d;
+  }
+  display() {
+    push();
+    translate(this.x, this.y, this.z);
+    texture(concrete);
+    box(this.w, this.h, this.d);
+    pop();
+  }
 }
