@@ -20,7 +20,8 @@ let crosshairGfx;
 
 function preload() {
   bricks = loadImage("brick.jpg");
-  grass = loadImage("thumbnail.jpg"); // 
+  grass = loadImage("thumbnail.jpg"); // the concrete texture
+  concrete = loadImage("grass.jpg")
   skyboxImgs.right = loadImage('sky_right.jpg');
   skyboxImgs.left = loadImage('sky_left.jpg');
   skyboxImgs.top = loadImage('sky_top.jpg');
@@ -53,10 +54,12 @@ function setup() {
   // wallArray.push(new wall(400, 0, 400));
   for (let i = 0; i < 3; i++) {
     // wallArray.push(new wall(400 - 400 * i, 0, -1200, 1));
-    wallArray.push(new wall(0 , 0, -800, 1200,400,50));
-    // wallArray.push(new wall(-400 , 0, -800, 100));
+    wallArray.push(new wall(0 , 0, -1355, 1200,400,50,));
+     wallArray.push(new wall(0, 0, 550, 1200, 400,50));
+       wallArray.push(new wall(0, 0, 550, 1200, 400,50));
   }
-  floorArray.push(new floor(0, 225, -400, 1200, 40, 2000)); // Add this line
+  floorArray.push(new floor(0, 225, -400, 1200, 40, 2000)); // Grass floor
+  floorArray.push(new FloorConcrete(0, 230, 0, 7000, 40, 7000)); // Concrete floor, 5 units below, fits skybox
   crosshairGfx = createGraphics(windowWidth, windowHeight);
   crosshairGfx.clear();
 }
@@ -135,7 +138,7 @@ function draw() {
   camAngle = 0;
   //player "flash light"
   pointLight(200, 200, 200, cam.eyeX, -200, cam.eyeZ);
-  ambientLight(5);
+  ambientLight(12);
 
   //creating the gem
   push();
@@ -219,4 +222,22 @@ function draw() {
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
   crosshairGfx = createGraphics(windowWidth, windowHeight);
+}
+
+class FloorConcrete {
+  constructor(x, y, z, w, h, d) {
+    this.x = x;
+    this.y = y;
+    this.z = z;
+    this.w = w;
+    this.h = h;
+    this.d = d;
+  }
+  display() {
+    push();
+    translate(this.x, this.y, this.z);
+    texture(concrete);
+    box(this.w, this.h, this.d);
+    pop();
+  }
 }

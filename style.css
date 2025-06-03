@@ -4,4 +4,16 @@ html, body {
 }
 canvas {
   display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 10;
 }
+
+// Overlay the crosshair on the WEBGL canvas
+resetMatrix();
+hint(DISABLE_DEPTH_TEST);
+imageMode(CORNER);
+image(crosshairGfx, 0, 0, width, height);
+hint(ENABLE_DEPTH_TEST);
+crosshairGfx.stroke(0); // black
