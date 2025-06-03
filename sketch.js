@@ -17,6 +17,7 @@ var dx, dz;
 let graphics, graphics2;
 let skyboxImgs = {};
 let crosshairGfx;
+let gunImg;
 
 function preload() {
   bricks = loadImage("brick.jpg");
@@ -28,6 +29,7 @@ function preload() {
   skyboxImgs.bottom = loadImage('sky_bottom.jpg');
   skyboxImgs.front = loadImage('sky_front.jpg');
   skyboxImgs.back = loadImage('sky_back.jpg');
+  gunImg = loadImage('gun.png'); // Load your gun image here
 }
 
 
@@ -56,9 +58,10 @@ function setup() {
     // wallArray.push(new wall(400 - 400 * i, 0, -1200, 1));
     wallArray.push(new wall(0 , 0, -1355, 1200,400,50,));
      wallArray.push(new wall(0, 0, 550, 1200, 400,50));
-       wallArray.push(new wall(0, 0, 550, 1200, 400,50));
+       wallArray.push(new wall(575, 0, -400, 50, 400,1900));
   }
   floorArray.push(new floor(0, 225, -400, 1200, 40, 2000)); // Grass floor
+  floorArray.push(new floor(0, -225, -400, 1200, 40, 2000)); // Grass floor
   floorArray.push(new FloorConcrete(0, 230, 0, 7000, 40, 7000)); // Concrete floor, 5 units below, fits skybox
   crosshairGfx = createGraphics(windowWidth, windowHeight);
   crosshairGfx.clear();
@@ -217,6 +220,15 @@ function draw() {
   resetMatrix();
   imageMode(CORNER);
   image(crosshairGfx, 0, 0, width, height);
+
+  // Draw gun image
+  resetMatrix(); // Reset to 2D drawing mode
+  imageMode(CENTER);
+  let gunX = width / 2;
+  let gunY = height - (height / 6); // Lower part of the screen
+  let gunW = width / 4; // Adjust size as needed
+  let gunH = gunImg.height * (gunW / gunImg.width); // Keep aspect ratio
+  image(gunImg, gunX, gunY, gunW, gunH);
 }
 
 function windowResized() {
