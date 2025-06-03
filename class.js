@@ -1,3 +1,5 @@
+
+
 // Example ramp class
 class Ramp {
   constructor(x, y, z, w, h, d, rotationY = 0, rotationX = -PI / 6) {
