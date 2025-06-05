@@ -19,13 +19,11 @@ let skyboxImgs = {};
 let crosshairGfx;
 let gunImg;
 let opponent;
-let hudGfx;
 
 function preload() {
   bricks = loadImage("brick.jpg");
   grass = loadImage("thumbnail.jpg"); // the concrete texture
-  concrete = loadImage("grass.jpg"); // the grass texture
-  tree = loadImage("Tree.png"); // the tree texture
+  concrete = loadImage("grass.jpg")
   skyboxImgs.right = loadImage('sky_right.jpg');
   skyboxImgs.left = loadImage('sky_left.jpg');
   skyboxImgs.top = loadImage('sky_top.jpg');
@@ -69,8 +67,6 @@ function setup() {
   crosshairGfx = createGraphics(windowWidth, windowHeight);
   crosshairGfx.clear();
   opponent = new Opponent(0, 230, -1000); // Y=230 matches your concrete floor
-  hudGfx = createGraphics(windowWidth, windowHeight);
-  hudGfx.clear();
 }
 
 
@@ -219,52 +215,33 @@ function draw() {
   cam.move(x, 0, z);
   // console.log(cam.eyeZ);
 
-  // Clear the HUD buffer
-  hudGfx.clear();
+  // Draw crosshair on 2D graphics buffer
+  crosshairGfx.clear();
+  crosshairGfx.stroke(255);
+  crosshairGfx.strokeWeight(3);
+  let cx = crosshairGfx.width / 2;
+  let cy = crosshairGfx.height / 2;
+  crosshairGfx.line(cx - 10, cy, cx + 10, cy);
+  crosshairGfx.line(cx, cy - 10, cx, cy + 10);
 
-  // Draw crosshair
-  hudGfx.stroke(255);
-  hudGfx.strokeWeight(3);
-  let cx = hudGfx.width / 2;
-  let cy = hudGfx.height / 2;
-  hudGfx.line(cx - 10, cy, cx + 10, cy);
-  hudGfx.line(cx, cy - 10, cx, cy + 10);
-
-  // Draw health bar (example: 75/100 health)
-  let health = 75;
-  let maxHealth = 100;
-  let barWidth = 200;
-  let barHeight = 20;
-  hudGfx.noStroke();
-  hudGfx.fill(100);
-  hudGfx.rect(30, hudGfx.height - 50, barWidth, barHeight, 10);
-  hudGfx.fill(0, 255, 0);
-  hudGfx.rect(30, hudGfx.height - 50, barWidth * (health / maxHealth), barHeight, 10);
-
-  // Draw ammo count (example: 12/30)
-  let ammo = 12;
-  let maxAmmo = 30;
-  hudGfx.fill(255);
-  hudGfx.textSize(32);
-  hudGfx.textAlign(RIGHT, BOTTOM);
-  hudGfx.text(`Ammo: ${ammo}/${maxAmmo}`, hudGfx.width - 30, hudGfx.height - 30);
-
-  // Draw gun image in the middle of the 2D overlay (HUD)
-  let gunW = width / 4;
-  let gunH = gunImg.height * (gunW / gunImg.width);
-  hudGfx.imageMode(CENTER);
-  hudGfx.image(gunImg, hudGfx.width / 2, hudGfx.height - hudGfx.height / 6, gunW, gunH);
-  hudGfx.imageMode(CORNER);
-
-  // Overlay the crosshair and HUD on the WEBGL canvas
+  // Overlay the crosshair on the WEBGL canvas
   resetMatrix();
   imageMode(CORNER);
-  image(hudGfx, 0, 0, width, height);
+  image(crosshairGfx, 0, 0, width, height);
+
+  // Draw gun image
+  resetMatrix(); // Reset to 2D drawing mode
+  imageMode(CENTER);
+  let gunX = width / 2;
+  let gunY = height - (height / 6); // Lower part of the screen
+  let gunW = width / 4; // Adjust size as needed
+  let gunH = gunImg.height * (gunW / gunImg.width); // Keep aspect ratio
+  image(gunImg, gunX, gunY, gunW, gunH);
 }
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
-  hudGfx = createGraphics(windowWidth, windowHeight);
+  crosshairGfx = createGraphics(windowWidth, windowHeight);
 }
 
 class FloorConcrete {
