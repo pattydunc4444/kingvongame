@@ -24,7 +24,8 @@ let hudGfx;
 function preload() {
   bricks = loadImage("brick.jpg");
   grass = loadImage("thumbnail.jpg"); // the concrete texture
-  concrete = loadImage("grass.jpg")
+  concrete = loadImage("grass.jpg"); // the grass texture
+  tree = loadImage("Tree.png"); // the tree texture
   skyboxImgs.right = loadImage('sky_right.jpg');
   skyboxImgs.left = loadImage('sky_left.jpg');
   skyboxImgs.top = loadImage('sky_top.jpg');
