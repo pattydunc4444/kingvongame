@@ -20,6 +20,7 @@ let crosshairGfx;
 let gunImg;
 let opponent;
 let fenceTex;
+let bgSong;
 
 function preload() {
   bricks = loadImage("brick.jpg");
@@ -33,6 +34,7 @@ function preload() {
   skyboxImgs.back = loadImage('sky_back.jpg');
   gunImg = loadImage('gun.png'); // Load your gun image here
   fenceTex = loadImage("fence.png");
+  bgSong = loadSound("tooker to the o.mp3");
 }
 
 
@@ -62,7 +64,7 @@ function setup() {
     wallArray.push(new wall(0 , 0, -1355, 1200,400,50,));
      wallArray.push(new wall(0, 0, 550, 1200, 400,50));
        wallArray.push(new wall(575, 0, -400, 50, 400,1900));
-       wallArray.push(new wall(-3075, 0, -400, 50, 400,1900));
+       wallArray.push(new wall(-1111, 0, -400, 50, 400,1900));
   }
   floorArray.push(new floor(0, 225, -400, 1200, 40, 2000)); // Grass floor
   floorArray.push(new floor(0, -225, -400, 1200, 40, 2000));
@@ -73,7 +75,15 @@ function setup() {
   opponent = new Opponent(0, 230, -1000); // Y=230 matches your concrete floor
 
   // Add a fence at position (x, y, z)
-  wallArray.push(new Fence(0, -130, 125, 400, 400, 20));
+  wallArray.push(new Fence(0, 10, 3500, 8000, 400, 20));
+  wallArray.push(new Fence(0, 10, -3500, 8000, 400, 20));
+    wallArray.push(new Fence(-3950, 10, 10, 1000, 400, 8000));
+     wallArray.push(new Fence(-3950, 10, 10, 1000, 400, 8000));
+  
+  if (bgSong && !bgSong.isPlaying()) {
+    bgSong.setLoop(true);
+    bgSong.play();
+  }
 }
 
 
@@ -350,6 +360,13 @@ function keyPressed() {
   }
 }
 
+function mousePressed() {
+  if (bgSong && !bgSong.isPlaying()) {
+    bgSong.setLoop(true);
+    bgSong.play();
+  }
+}
+
 class Fence extends wall {
   constructor(x, y, z, w = 400, h = 200, d = 20) {
     super(x, y, z, w, h, d);
@@ -364,12 +381,35 @@ class Fence extends wall {
     fill(180, 120, 60); // Brownish color for wood
     box(this.w, this.h, this.d);
 
-    // Draw the textured top face
+    // Draw the textured right face
     push();
-    translate(0, -this.h / 2 + 1, 0); // Move to the top face (+1 to avoid z-fighting)
-    rotateX(-HALF_PI); // Make the plane face up
+    translate(this.w / 2 + 1, 0, 0); // Move to right face
+    rotateY(HALF_PI);
     texture(fenceTex);
-    plane(this.w, this.d);
+    plane(this.d, this.h);
+    pop();
+
+    // Draw the textured left face
+    push();
+    translate(-this.w / 2 - 1, 0, 0); // Move to left face
+    rotateY(-HALF_PI);
+    texture(fenceTex);
+    plane(this.d, this.h);
+    pop();
+
+    // Draw the textured front face
+    push();
+    translate(0, 0, -this.d / 2 - 1); // Move to front face
+    texture(fenceTex);
+    plane(this.w, this.h);
+    pop();
+
+    // Draw the textured back face
+    push();
+    translate(0, 0, this.d / 2 + 1); // Move to back face
+    rotateY(PI);
+    texture(fenceTex);
+    plane(this.w, this.h);
     pop();
 
     pop();
