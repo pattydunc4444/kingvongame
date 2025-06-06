@@ -19,18 +19,20 @@ let skyboxImgs = {};
 let crosshairGfx;
 let gunImg;
 let opponent;
+let fenceTex;
 
 function preload() {
   bricks = loadImage("brick.jpg");
   grass = loadImage("thumbnail.jpg"); // the concrete texture
   concrete = loadImage("grass.jpg")
   skyboxImgs.right = loadImage('sky_right.jpg');
-  skyboxImgs.left = loadImage('sky_left.jpg');
+  skyboxImgs.left = loadImage('oblockLeft.jpg');
   skyboxImgs.top = loadImage('sky_top.jpg');
   skyboxImgs.bottom = loadImage('sky_bottom.jpg');
   skyboxImgs.front = loadImage('sky_front.jpg');
   skyboxImgs.back = loadImage('sky_back.jpg');
   gunImg = loadImage('gun.png'); // Load your gun image here
+  fenceTex = loadImage("fence.png");
 }
 
 
@@ -49,7 +51,7 @@ function setup() {
   bCam.setPosition(0, -3000, 200);
   //cam is the player camera
   cam = createCamera();
-  cam.setPosition(400, 0, 800);
+  cam.setPosition(-1000, -10, 1100);
 
 
   //the oblock building
@@ -60,13 +62,18 @@ function setup() {
     wallArray.push(new wall(0 , 0, -1355, 1200,400,50,));
      wallArray.push(new wall(0, 0, 550, 1200, 400,50));
        wallArray.push(new wall(575, 0, -400, 50, 400,1900));
+       wallArray.push(new wall(-3075, 0, -400, 50, 400,1900));
   }
   floorArray.push(new floor(0, 225, -400, 1200, 40, 2000)); // Grass floor
-  floorArray.push(new floor(0, -225, -400, 1200, 40, 2000)); // Grass floor
+  floorArray.push(new floor(0, -225, -400, 1200, 40, 2000));
+  floorArray.push(new floor(-1200, 225, -400, 1200, 40, 1000)); // Grass floor
   floorArray.push(new FloorConcrete(0, 230, 0, 7000, 40, 7000)); // Concrete floor, 5 units below, fits skybox
   crosshairGfx = createGraphics(windowWidth, windowHeight);
   crosshairGfx.clear();
   opponent = new Opponent(0, 230, -1000); // Y=230 matches your concrete floor
+
+  // Add a fence at position (x, y, z)
+  wallArray.push(new Fence(0, -130, 125, 400, 400, 20));
 }
 
 
@@ -151,11 +158,7 @@ function draw() {
   pointLight(200, 200, 200, cam.eyeX, -200, cam.eyeZ);
   ambientLight(12);
 
-  //creating the gem
-  push();
-
-  pop();
-
+  
 
   var anyTouching = false;
   //displays all blocks in an array
@@ -344,5 +347,31 @@ function keyPressed() {
   // Press SPACE to "shoot"
   if (key === ' ' && opponent && opponent.alive && opponent.isTargeted(cam)) {
     opponent.alive = false;
+  }
+}
+
+class Fence extends wall {
+  constructor(x, y, z, w = 400, h = 200, d = 20) {
+    super(x, y, z, w, h, d);
+  }
+
+  display() {
+    push();
+    translate(this.x, this.y, this.z);
+
+    // Draw the main box (plain color)
+    noStroke();
+    fill(180, 120, 60); // Brownish color for wood
+    box(this.w, this.h, this.d);
+
+    // Draw the textured top face
+    push();
+    translate(0, -this.h / 2 + 1, 0); // Move to the top face (+1 to avoid z-fighting)
+    rotateX(-HALF_PI); // Make the plane face up
+    texture(fenceTex);
+    plane(this.w, this.d);
+    pop();
+
+    pop();
   }
 }
