@@ -21,20 +21,24 @@ let gunImg;
 let opponent;
 let fenceTex;
 let bgSong;
+let skibidiImg;
+let gameStarted = false; // Add this at the top with your globals
+let skibidiWalls = [];
 
 function preload() {
   bricks = loadImage("brick.jpg");
   grass = loadImage("thumbnail.jpg"); // the concrete texture
   concrete = loadImage("grass.jpg")
-  skyboxImgs.right = loadImage('sky_right.jpg');
+  skyboxImgs.right = loadImage('oblockRight.jpg');
   skyboxImgs.left = loadImage('oblockLeft.jpg');
   skyboxImgs.top = loadImage('sky_top.jpg');
   skyboxImgs.bottom = loadImage('sky_bottom.jpg');
-  skyboxImgs.front = loadImage('sky_front.jpg');
-  skyboxImgs.back = loadImage('sky_back.jpg');
+  skyboxImgs.front = loadImage('oblockFront.jpg');
+  skyboxImgs.back = loadImage('oblockrear.jpg');
   gunImg = loadImage('gun.png'); // Load your gun image here
   fenceTex = loadImage("fence.png");
   bgSong = loadSound("tooker to the o.mp3");
+  skibidiImg = loadImage("skibidiopp.png");
 }
 
 
@@ -63,12 +67,14 @@ function setup() {
     // wallArray.push(new wall(400 - 400 * i, 0, -1200, 1));
     wallArray.push(new wall(0 , 0, -1355, 1200,400,50,));
      wallArray.push(new wall(0, 0, 550, 1200, 400,50));
+      wallArray.push(new wall(-1200, 0, 75, 1200, 400,50));
        wallArray.push(new wall(575, 0, -400, 50, 400,1900));
-       wallArray.push(new wall(-1111, 0, -400, 50, 400,1900));
+       wallArray.push(new wall(-1785, 0, -400, 25, 400,1000));
   }
   floorArray.push(new floor(0, 225, -400, 1200, 40, 2000)); // Grass floor
   floorArray.push(new floor(0, -225, -400, 1200, 40, 2000));
-  floorArray.push(new floor(-1200, 225, -400, 1200, 40, 1000)); // Grass floor
+  floorArray.push(new floor(-1200, 225, -400, 1200, 40, 1000));
+   floorArray.push(new floor(-1200, -225, -400, 1200, 40, 1000)); // Grass floor
   floorArray.push(new FloorConcrete(0, 230, 0, 7000, 40, 7000)); // Concrete floor, 5 units below, fits skybox
   crosshairGfx = createGraphics(windowWidth, windowHeight);
   crosshairGfx.clear();
@@ -78,8 +84,9 @@ function setup() {
   wallArray.push(new Fence(0, 10, 3500, 8000, 400, 20));
   wallArray.push(new Fence(0, 10, -3500, 8000, 400, 20));
     wallArray.push(new Fence(-3950, 10, 10, 1000, 400, 8000));
-     wallArray.push(new Fence(-3950, 10, 10, 1000, 400, 8000));
-  
+     wallArray.push(new Fence(3950, 10, 10, 1000, 400, 8000));
+   wallArray.push(new Fence(-2650, 10, 0, 1750, 400, 10));
+  skibidiWalls.push(new SkibidiWall(0, 230 + 100, -1000, 200, 200));
   if (bgSong && !bgSong.isPlaying()) {
     bgSong.setLoop(true);
     bgSong.play();
@@ -89,6 +96,18 @@ function setup() {
 
 
 function draw() {
+  // if (!gameStarted) {
+  //   // Start screen
+  //   background(30, 30, 40);
+  //   fill(255);
+  //   textAlign(CENTER, CENTER);
+  //   textSize(64);
+  //   text("KING VON GAME", width / 2, height / 2 - 60);
+  //   textSize(32);
+  //   text("Press SPACE to Start", width / 2, height / 2 + 20);
+  //   return; // Pause the game until started
+  // }
+
   background(120);
 
   // Draw skybox
@@ -229,27 +248,14 @@ function draw() {
   // console.log(cam.eyeZ);
 
   // Draw crosshair on 2D graphics buffer
-  crosshairGfx.clear();
-  crosshairGfx.stroke(255);
-  crosshairGfx.strokeWeight(3);
-  let cx = crosshairGfx.width / 2;
-  let cy = crosshairGfx.height / 2;
-  crosshairGfx.line(cx - 10, cy, cx + 10, cy);
-  crosshairGfx.line(cx, cy - 10, cx, cy + 10);
+  
 
   // Overlay the crosshair on the WEBGL canvas
   resetMatrix();
   imageMode(CORNER);
   image(crosshairGfx, 0, 0, width, height);
 
-  // Draw gun image
-  resetMatrix(); // Reset to 2D drawing mode
-  imageMode(CENTER);
-  let gunX = width / 2;
-  let gunY = height - (height / 6); // Lower part of the screen
-  let gunW = width / 4; // Adjust size as needed
-  let gunH = gunImg.height * (gunW / gunImg.width); // Keep aspect ratio
-  image(gunImg, gunX, gunY, gunW, gunH);
+  
 }
 
 function windowResized() {
@@ -354,8 +360,14 @@ class Opponent {
 }
 
 function keyPressed() {
+  // Start the game on SPACE
+  if (!gameStarted && key === ' ') {
+    gameStarted = true;
+    return;
+  }
+
   // Press SPACE to "shoot"
-  if (key === ' ' && opponent && opponent.alive && opponent.isTargeted(cam)) {
+  if (gameStarted && key === ' ' && opponent && opponent.alive && opponent.isTargeted(cam)) {
     opponent.alive = false;
   }
 }
@@ -414,4 +426,70 @@ class Fence extends wall {
 
     pop();
   }
+}
+
+class SkibidiEnemy {
+  constructor(x, y, z, size = 100) {
+    this.x = x;
+    this.y = 230 + size / 2; // Always just above the concrete floor
+    this.z = z;
+    this.size = size;
+    this.alive = true;
+  }
+
+  display() {
+    if (!this.alive) return;
+    push();
+    // Place enemy at its fixed world position
+    translate(this.x, this.y, this.z);
+    // Billboard: always face the camera horizontally
+    let v = createVector(cam.eyeX - this.x, 0, cam.eyeZ - this.z);
+    let angleY = atan2(v.x, v.z);
+    rotateY(angleY);
+    texture(skibidiImg);
+    plane(this.size, this.size);
+    pop();
+  }
+
+  // Check if a ray from the camera hits this enemy
+  isShot() {
+    if (!this.alive) return false;
+    // Ray from camera position in camera direction
+    let camPos = createVector(cam.eyeX, cam.eyeY, cam.eyeZ);
+    let camDir = createVector(cam.centerX - cam.eyeX, cam.centerY - cam.eyeY, cam.centerZ - cam.eyeZ).normalize();
+    let enemyPos = createVector(this.x, this.y, this.z);
+    let toEnemy = p5.Vector.sub(enemyPos, camPos);
+    let proj = toEnemy.dot(camDir);
+    if (proj < 0) return false; // Enemy is behind camera
+    let closest = p5.Vector.add(camPos, p5.Vector.mult(camDir, proj));
+    let distToCenter = p5.Vector.dist(closest, enemyPos);
+    return distToCenter < this.size / 2;
+  }
+}
+
+class SkibidiWall {
+  constructor(x, y, z, w = 200, h = 200) {
+    this.x = x;
+    this.y = y;
+    this.z = z;
+    this.w = w;
+    this.h = h;
+  }
+
+  display() {
+    push();
+    translate(this.x, this.y, this.z);
+    // Billboard: always face the camera horizontally
+    let v = createVector(cam.eyeX - this.x, 0, cam.eyeZ - this.z);
+    let angleY = atan2(v.x, v.z);
+    rotateY(angleY);
+    texture(skibidiImg);
+    // Draw a single-sided plane (no fill, just texture)
+    plane(this.w, this.h);
+    pop();
+  }
+}
+
+for (let wall of skibidiWalls) {
+  wall.display();
 }
