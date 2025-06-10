@@ -1,5 +1,4 @@
-//Luca Del Priore MMP 310
-//simple 3D maze game
+//king von game
 
 //tutorial on collision https://www.youtube.com/watch?v=uAfw-ko3kB8
 
@@ -67,8 +66,11 @@ function setup() {
     // wallArray.push(new wall(400 - 400 * i, 0, -1200, 1));
     wallArray.push(new wall(0 , 0, -1355, 1200,400,50,));
      wallArray.push(new wall(0, 0, 550, 1200, 400,50));
+     wallArray.push(new wall(-1100, 0, -675, 1000, 400,50));
       wallArray.push(new wall(-1200, 0, 75, 1200, 400,50));
        wallArray.push(new wall(575, 0, -400, 50, 400,1900));
+       wallArray.push(new wall(-575, 0, -1000, 50, 400,650));
+          wallArray.push(new wall(-575, 0, 300, 50, 400,500));
        wallArray.push(new wall(-1785, 0, -400, 25, 400,1000));
   }
   floorArray.push(new floor(0, 225, -400, 1200, 40, 2000)); // Grass floor
@@ -86,7 +88,7 @@ function setup() {
     wallArray.push(new Fence(-3950, 10, 10, 1000, 400, 8000));
      wallArray.push(new Fence(3950, 10, 10, 1000, 400, 8000));
    wallArray.push(new Fence(-2650, 10, 0, 1750, 400, 10));
-  skibidiWalls.push(new SkibidiWall(0, 230 + 100, -1000, 200, 200));
+  skibidiWalls.push(new SkibidiWall(0, 0 + 0, 0, 0, 0));
   if (bgSong && !bgSong.isPlaying()) {
     bgSong.setLoop(true);
     bgSong.play();
@@ -210,19 +212,19 @@ function draw() {
 
   //wasd controls for strafing
   if (keyIsDown(83)) {
-    z = 10;
+    z = 15;
   }
 
   if (keyIsDown(87)) {
-    z = -10;
+    z = -15;
   }
 
   if (keyIsDown(65)) {
-    x = -10;
+    x = -15;
   }
 
   if (keyIsDown(68)) {
-    x = 10;
+    x = 15;
   }
 
   //puts player back to last place not touching a wall 
@@ -235,10 +237,10 @@ function draw() {
   }
   //looking side to side controls  
   if (keyIsDown(37)) {
-    camAngle = 0.05;
+    camAngle = 0.075;
   }
   if (keyIsDown(39)) {
-    camAngle = -0.05;
+    camAngle = -0.075;
   }
   //mouse would often leave the player stuck
   //cam.pan(movedX*-0.01);
@@ -366,10 +368,6 @@ function keyPressed() {
     return;
   }
 
-  // Press SPACE to "shoot"
-  if (gameStarted && key === ' ' && opponent && opponent.alive && opponent.isTargeted(cam)) {
-    opponent.alive = false;
-  }
 }
 
 function mousePressed() {
