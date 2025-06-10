@@ -66,7 +66,7 @@ function setup() {
     // wallArray.push(new wall(400 - 400 * i, 0, -1200, 1));
     wallArray.push(new wall(0 , 0, -1355, 1200,400,50,));
      wallArray.push(new wall(0, 0, 550, 1200, 400,50));
-     wallArray.push(new wall(-1100, 0, -875, 1000, 400,50));
+     wallArray.push(new wall(-1100, 0, -880, 1000, 400,50));
       wallArray.push(new wall(-1200, 0, 75, 1200, 400,50));
        wallArray.push(new wall(575, 0, -400, 50, 400,1900));
        wallArray.push(new wall(-575, 0, -1000, 50, 400,650));
