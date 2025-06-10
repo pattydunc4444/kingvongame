@@ -66,7 +66,7 @@ function setup() {
     // wallArray.push(new wall(400 - 400 * i, 0, -1200, 1));
     wallArray.push(new wall(0 , 0, -1355, 1200,400,50,));
      wallArray.push(new wall(0, 0, 550, 1200, 400,50));
-     wallArray.push(new wall(-1100, 0, -675, 1000, 400,50));
+     wallArray.push(new wall(-1100, 0, -875, 1000, 400,50));
       wallArray.push(new wall(-1200, 0, 75, 1200, 400,50));
        wallArray.push(new wall(575, 0, -400, 50, 400,1900));
        wallArray.push(new wall(-575, 0, -1000, 50, 400,650));
@@ -93,6 +93,14 @@ function setup() {
     bgSong.setLoop(true);
     bgSong.play();
   }
+
+  graphics.background(0, 0, 0, 200); // semi-transparent black
+  graphics.textAlign(CENTER, CENTER);
+  graphics.textSize(32);
+  graphics.fill(255, 255, 0);
+  fill(100)
+  graphics.text("Defeat the Skibidi Henchmen\nto reach the boss, Mr Beast", graphics.width / 2, graphics.height / 2);
+  
 }
 
 
@@ -109,6 +117,30 @@ function draw() {
   //   text("Press SPACE to Start", width / 2, height / 2 + 20);
   //   return; // Pause the game until started
   // }
+
+ // Place the sign in front of the spawn point
+push();
+translate(-1000, 100, 800 - 400); // In front of player spawn, adjust as needed
+rotateY(PI); // Face the player
+texture(graphics);
+plane(400, 200);
+pop();
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+  // Place a block directly in the middle of the camera's view, following where it looks
+push();
+let blockDistance = 100; // Distance in front of the camera
+let camDir = createVector(cam.centerX - cam.eyeX, cam.centerY - cam.eyeY, cam.centerZ - cam.eyeZ).normalize();
+let blockPos = createVector(cam.eyeX, cam.eyeY, cam.eyeZ).add(camDir.mult(blockDistance));
+translate(blockPos.x, blockPos.y, blockPos.z);
+fill(0, 255, 0);
+box(2, 2, 2); // Size of the block
+pop();
 
   background(120);
 
@@ -426,44 +458,6 @@ class Fence extends wall {
   }
 }
 
-class SkibidiEnemy {
-  constructor(x, y, z, size = 100) {
-    this.x = x;
-    this.y = 230 + size / 2; // Always just above the concrete floor
-    this.z = z;
-    this.size = size;
-    this.alive = true;
-  }
-
-  display() {
-    if (!this.alive) return;
-    push();
-    // Place enemy at its fixed world position
-    translate(this.x, this.y, this.z);
-    // Billboard: always face the camera horizontally
-    let v = createVector(cam.eyeX - this.x, 0, cam.eyeZ - this.z);
-    let angleY = atan2(v.x, v.z);
-    rotateY(angleY);
-    texture(skibidiImg);
-    plane(this.size, this.size);
-    pop();
-  }
-
-  // Check if a ray from the camera hits this enemy
-  isShot() {
-    if (!this.alive) return false;
-    // Ray from camera position in camera direction
-    let camPos = createVector(cam.eyeX, cam.eyeY, cam.eyeZ);
-    let camDir = createVector(cam.centerX - cam.eyeX, cam.centerY - cam.eyeY, cam.centerZ - cam.eyeZ).normalize();
-    let enemyPos = createVector(this.x, this.y, this.z);
-    let toEnemy = p5.Vector.sub(enemyPos, camPos);
-    let proj = toEnemy.dot(camDir);
-    if (proj < 0) return false; // Enemy is behind camera
-    let closest = p5.Vector.add(camPos, p5.Vector.mult(camDir, proj));
-    let distToCenter = p5.Vector.dist(closest, enemyPos);
-    return distToCenter < this.size / 2;
-  }
-}
 
 class SkibidiWall {
   constructor(x, y, z, w = 200, h = 200) {
@@ -487,6 +481,8 @@ class SkibidiWall {
     pop();
   }
 }
+
+
 
 for (let wall of skibidiWalls) {
   wall.display();
