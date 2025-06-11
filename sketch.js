@@ -25,6 +25,8 @@ let treeImg;
 let gameStarted = false; // Add this at the top with your globals
 let skibidiWalls = [];
 let trees = [];
+let oppTexture; // Declare globally
+let movingWalls = []; // <-- Declare globally
 
 function preload() {
   bricks = loadImage("brick.jpg");
@@ -41,6 +43,7 @@ function preload() {
   bgSong = loadSound("tooker to the o.mp3");
   skibidiImg = loadImage("skibidiopp.png");
   treeImg = loadImage("usetree.png");
+  oppTexture = loadImage("king vons opp.png");
 }
 
 
@@ -107,6 +110,9 @@ function setup() {
   trees.push(new Tree(0, 0, 0)); // Example position
   trees.push(new Tree(0, 0, 0));
   // Add more as needed
+
+  // Add initial moving wall
+  movingWalls.push(new MovingWall(0, 0, 0, 100, 100, 20, 2, 0, 0)); // Moves along X
 }
 
 
@@ -530,6 +536,44 @@ class Tree {
   }
 }
 
+class MovingWall {
+  constructor(x, y, z, w, h, d, speedX = 0, speedY = 0, speedZ = 0) {
+    this.x = x;
+    this.y = y;
+    this.z = z;
+    this.w = w;
+    this.h = h;
+    this.d = d;
+    this.speedX = speedX;
+    this.speedY = speedY;
+    this.speedZ = speedZ;
+  }
+
+  move() {
+    this.x += this.speedX;
+    this.y += this.speedY;
+    this.z += this.speedZ;
+    // Add bounds or direction change logic if needed
+  }
+
+  display() {
+    push();
+    translate(this.x, this.y, this.z);
+
+    // Draw the main wall (without texture)
+    fill(150, 0, 0);
+    box(this.w, this.h, this.d);
+
+    // Draw the textured front face only
+    push();
+    translate(0, 0, this.d / 2 + 0.1); // Slightly in front to avoid z-fighting
+    texture(oppTexture);
+    plane(this.w, this.h);
+    pop();
+
+    pop();
+  }
+}
 
 
 for (let wall of skibidiWalls) {
@@ -564,3 +608,9 @@ fill(0, 0, 0, 180); // Semi-transparent black
 rectMode(CENTER);
 rect(0, 0, barWidth, barHeight);
 pop();
+
+// Move and display all moving walls
+for (let mw of movingWalls) {
+  mw.move();
+  mw.display();
+}
