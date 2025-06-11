@@ -21,8 +21,10 @@ let opponent;
 let fenceTex;
 let bgSong;
 let skibidiImg;
+let treeImg;
 let gameStarted = false; // Add this at the top with your globals
 let skibidiWalls = [];
+let trees = [];
 
 function preload() {
   bricks = loadImage("brick.jpg");
@@ -38,6 +40,7 @@ function preload() {
   fenceTex = loadImage("fence.png");
   bgSong = loadSound("tooker to the o.mp3");
   skibidiImg = loadImage("skibidiopp.png");
+  treeImg = loadImage("usetree.png");
 }
 
 
@@ -101,30 +104,24 @@ function setup() {
   fill(100)
   graphics.text("Defeat the Skibidi Henchmen\nto reach the boss, Mr Beast", graphics.width / 2, graphics.height / 2);
   
+  trees.push(new Tree(0, 0, 0)); // Example position
+  trees.push(new Tree(0, 0, 0));
+  // Add more as needed
 }
 
 
 
 function draw() {
-  // if (!gameStarted) {
-  //   // Start screen
-  //   background(30, 30, 40);
-  //   fill(255);
-  //   textAlign(CENTER, CENTER);
-  //   textSize(64);
-  //   text("KING VON GAME", width / 2, height / 2 - 60);
-  //   textSize(32);
-  //   text("Press SPACE to Start", width / 2, height / 2 + 20);
-  //   return; // Pause the game until started
-  // }
+  background(120); // <-- Move this to the top!
 
- // Place the sign in front of the spawn point
-push();
-translate(-1000, 100, 800 - 400); // In front of player spawn, adjust as needed
-rotateY(PI); // Face the player
-texture(graphics);
-plane(400, 200);
-pop();
+  // Place the sign in front of the spawn point
+  push();
+  translate(-1000, 100, 800 - 400); // In front of player spawn, adjust as needed
+  rotateY(PI); // Face the player
+  scale(-1, 1, 1); // Flip the sign horizontally so text is not mirrored
+  texture(graphics);
+  plane(400, 200);
+  pop();
  
  
  
@@ -139,10 +136,19 @@ let camDir = createVector(cam.centerX - cam.eyeX, cam.centerY - cam.eyeY, cam.ce
 let blockPos = createVector(cam.eyeX, cam.eyeY, cam.eyeZ).add(camDir.mult(blockDistance));
 translate(blockPos.x, blockPos.y, blockPos.z);
 fill(0, 255, 0);
-box(2, 2, 2); // Size of the block
+box(1, 1, 1); // Size of the block
 pop();
 
-  background(120);
+ // Place a block directly in the middle of the camera's view, following where it looks
+push();
+let blockDistance2 = 200; // Distance in front of the camera
+let camDir2 = createVector(cam.centerX - cam.eyeX, cam.centerY - cam.eyeY, cam.centerZ - cam.eyeZ).normalize();
+let blockPos2 = createVector(cam.eyeX, cam.eyeY, cam.eyeZ).add(camDir.mult(blockDistance));
+translate(blockPos2.x, blockPos2.y, blockPos2.z);
+fill(0, 255, 0);
+box(200, 2, 2); // Size of the block
+pop();
+
 
   // Draw skybox
   push();
@@ -203,10 +209,10 @@ pop();
   }
 
   // Draw the opponent in 3D world space
-  if (opponent) {
-    opponent.move();
-    opponent.display();
-  }
+  // if (opponent) {
+  //   opponent.move();
+  //   opponent.display();
+  // }
 
   //maze building camera
   bCam.lookAt(0, 0, 0);
@@ -284,8 +290,9 @@ pop();
   // Draw crosshair on 2D graphics buffer
   
 
+  
+
   // Overlay the crosshair on the WEBGL canvas
-  resetMatrix();
   imageMode(CORNER);
   image(crosshairGfx, 0, 0, width, height);
 
@@ -401,6 +408,24 @@ function keyPressed() {
   }
 
 }
+class Enemy {
+constructor(x,z) {
+this.x = x;
+this.y = z;
+this.r = 50;
+
+
+
+
+
+}
+
+
+
+
+
+
+}
 
 function mousePressed() {
   if (bgSong && !bgSong.isPlaying()) {
@@ -482,8 +507,60 @@ class SkibidiWall {
   }
 }
 
+class Tree {
+  constructor(x, y, z, w = 120, h = 180) {
+    this.x = x;
+    this.y = y;
+    this.z = z;
+    this.w = w;
+    this.h = h;
+  }
+
+  display() {
+    push();
+    translate(this.x, this.y, this.z);
+    // Billboard: always face the camera horizontally
+    let v = createVector(cam.eyeX - this.x, 0, cam.eyeZ - this.z);
+    let angleY = atan2(v.x, v.z);
+    rotateY(angleY);
+    texture(treeImg);
+    noStroke();
+    plane(this.w, this.h);
+    pop();
+  }
+}
+
 
 
 for (let wall of skibidiWalls) {
   wall.display();
 }
+
+for (let t of trees) {
+  t.display();
+}
+
+// Draw a bar slightly in front of the camera, taking up half the screen width
+push();
+// Calculate direction the camera is facing
+let camDir = createVector(cam.centerX - cam.eyeX, cam.centerY - cam.eyeY, cam.centerZ - cam.eyeZ).normalize();
+// Position the bar a bit in front of the camera
+let barDistance = 30; // Distance in front of camera
+let barPos = createVector(cam.eyeX, cam.eyeY, cam.eyeZ).add(camDir.mult(barDistance));
+translate(barPos.x, barPos.y, barPos.z);
+
+// Make the bar always face the camera
+let up = createVector(0, -1, 0);
+let right = camDir.cross(up).normalize();
+let angleY = atan2(camDir.x, camDir.z);
+rotateY(angleY);
+
+// Set bar size (relative to camera FOV)
+let barWidth = width / 2 / 10; // Adjust divisor for scale
+let barHeight = 20; // Adjust as needed
+
+noStroke();
+fill(0, 0, 0, 180); // Semi-transparent black
+rectMode(CENTER);
+rect(0, 0, barWidth, barHeight);
+pop();
