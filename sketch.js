@@ -70,19 +70,19 @@ function setup() {
   // wallArray.push(new wall(400, 0, 400));
   for (let i = 0; i < 3; i++) {
     // wallArray.push(new wall(400 - 400 * i, 0, -1200, 1));
-    wallArray.push(new wall(0 , 0, -1355, 1200,400,50,));
-     wallArray.push(new wall(0, 0, 550, 1200, 400,50));
-     wallArray.push(new wall(-1100, 0, -880, 1000, 400,50));
-      wallArray.push(new wall(-1200, 0, 75, 1200, 400,50));
-       wallArray.push(new wall(575, 0, -400, 50, 400,1900));
-       wallArray.push(new wall(-575, 0, -1000, 50, 400,650));
-          wallArray.push(new wall(-575, 0, 300, 50, 400,500));
-       wallArray.push(new wall(-1785, 0, -400, 25, 400,1000));
+    wallArray.push(new wall(0 , 0, -1355, 1200,1000,50,));
+     wallArray.push(new wall(0, 0, 550, 1200, 1000,50));
+     wallArray.push(new wall(-1100, 0, -880, 1000, 1000,50));
+      wallArray.push(new wall(-1200, 0, 75, 1200, 1000,50));
+       wallArray.push(new wall(575, 0, -400, 50, 1000,1900));
+       wallArray.push(new wall(-575, 0, -1000, 50, 1000,650));
+          wallArray.push(new wall(-575, 0, 300, 50, 1000,500));
+       wallArray.push(new wall(-1785, 0, -400, 25, 1000,1000));
   }
   floorArray.push(new floor(0, 225, -400, 1200, 40, 2000)); // Grass floor
-  floorArray.push(new floor(0, -225, -400, 1200, 40, 2000));
+  floorArray.push(new floor(0, -525, -400, 1200, 40, 2000));
   floorArray.push(new floor(-1200, 225, -400, 1200, 40, 1000));
-   floorArray.push(new floor(-1200, -225, -400, 1200, 40, 1000)); // Grass floor
+   floorArray.push(new floor(-1200, -525, -400, 1200, 40, 1000)); // Grass floor
   floorArray.push(new FloorConcrete(0, 230, 0, 7000, 40, 7000)); // Concrete floor, 5 units below, fits skybox
   crosshairGfx = createGraphics(windowWidth, windowHeight);
   crosshairGfx.clear();
@@ -105,7 +105,7 @@ function setup() {
   graphics.textSize(32);
   graphics.fill(255, 255, 0);
   fill(100)
-  graphics.text("Defeat the Skibidi Henchmen\nto reach the boss, Mr Beast", graphics.width / 2, graphics.height / 2);
+  graphics.text("Defeat the Skibidi Henchmen\nto reach the boss, lil t", graphics.width / 2, graphics.height / 2);
   
   trees.push(new Tree(0, 0, 0)); // Example position
   trees.push(new Tree(0, 0, 0));
@@ -113,12 +113,24 @@ function setup() {
 
   // Add initial moving wall
   movingWalls.push(new MovingWall(0, 0, 0, 100, 100, 20, 2, 0, 0)); // Moves along X
+  movingWalls.push(new MovingWall(500, 230, 0, 400, 200, 40)); // Example position and size
+  movingWalls.push(new MovingWall(-1000, 230, 800, 400, 200, 40)); // In front of player, at floor height
 }
 
 
 
 function draw() {
-  background(120); // <-- Move this to the top!
+  // if (!gameStarted) {
+  //   // Start screen
+  //   background(30, 30, 40);
+  //   fill(255);
+  //   textAlign(CENTER, CENTER);
+  //   textSize(64);
+  //   text("KING VON GAME", width / 2, height / 2 - 60);
+  //   textSize(32);
+  //   text("Press SPACE to Start", width / 2, height / 2 + 20);
+  //   return; // Pause the game until started
+  // }
 
   // Place the sign in front of the spawn point
   push();
@@ -344,8 +356,8 @@ class Opponent {
     if (!this.alive) return;
 
     // Try to move
-    let nextX = this.x + this.dirX * this.speed;
-    let nextZ = this.z + this.dirZ * this.speed;
+    let nextX = this.x + this.dirX + this.speed;
+    let nextZ = this.z + this.dirZ + this.speed;
 
     // Check for wall collision
     let willCollide = false;
@@ -584,33 +596,8 @@ for (let t of trees) {
   t.display();
 }
 
-// Draw a bar slightly in front of the camera, taking up half the screen width
-push();
-// Calculate direction the camera is facing
-let camDir = createVector(cam.centerX - cam.eyeX, cam.centerY - cam.eyeY, cam.centerZ - cam.eyeZ).normalize();
-// Position the bar a bit in front of the camera
-let barDistance = 30; // Distance in front of camera
-let barPos = createVector(cam.eyeX, cam.eyeY, cam.eyeZ).add(camDir.mult(barDistance));
-translate(barPos.x, barPos.y, barPos.z);
-
-// Make the bar always face the camera
-let up = createVector(0, -1, 0);
-let right = camDir.cross(up).normalize();
-let angleY = atan2(camDir.x, camDir.z);
-rotateY(angleY);
-
-// Set bar size (relative to camera FOV)
-let barWidth = width / 2 / 10; // Adjust divisor for scale
-let barHeight = 20; // Adjust as needed
-
-noStroke();
-fill(0, 0, 0, 180); // Semi-transparent black
-rectMode(CENTER);
-rect(0, 0, barWidth, barHeight);
-pop();
-
-// Move and display all moving walls
 for (let mw of movingWalls) {
   mw.move();
   mw.display();
 }
+
