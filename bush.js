@@ -1,7 +1,7 @@
 
 
-// Example ramp class
-class Ramp {
+// // Example ramp class
+class Bush {
   constructor(x, y, z, w, h, d, rotationY = 0, rotationX = -PI / 6) {
     this.x = x;
     this.y = y;
@@ -17,6 +17,7 @@ class Ramp {
     translate(this.x, this.y, this.z);
     rotateY(this.rotationY);
     rotateX(this.rotationX);
+    texture(bushImg)
     // You can use a texture if you want, e.g. texture(concrete);
     box(this.w, this.h, this.d);
     pop();
