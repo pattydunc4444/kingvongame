@@ -95,13 +95,13 @@ function setup() {
     bgSong.setLoop(true);
     bgSong.play();
   }
-
+  wallArray.push(new OppWall(0, -230, 0, 400, 400, 400)); // Example position and size
   graphics.background(0, 0, 0, 200); // semi-transparent black
   graphics.textAlign(CENTER, CENTER);
   graphics.textSize(32);
   graphics.fill(255, 255, 0);
   fill(100)
-  graphics.text("Defeat the Skibidi Henchmen\nto reach the boss, lil t", graphics.width / 2, graphics.height / 2);
+  graphics.text("Defeat the Skibidi Henchmen\nto reach the boss, lil t ja bro", graphics.width / 2, graphics.height / 2);
   
   trees.push(new Tree(0, 0, 0)); // Example position
   trees.push(new Tree(0, 0, 0));
@@ -358,6 +358,24 @@ class FloorConcrete {
     push();
     translate(this.x, this.y, this.z);
     texture(concrete);
+    box(this.w, this.h, this.d);
+    pop();
+  }
+}
+
+class OppWall {
+  constructor(x, y, z, w, h, d) {
+    this.x = x;
+    this.y = y;
+    this.z = z;
+    this.w = w;
+    this.h = h;
+    this.d = d;
+  }
+  display() {
+    push();
+    translate(this.x, this.y, this.z);
+    texture(oppWallTexture); // Uses the loaded "king vons opp.png"
     box(this.w, this.h, this.d);
     pop();
   }
