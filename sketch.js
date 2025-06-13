@@ -28,6 +28,7 @@ let trees = [];
 let oppTexture; // Declare globally
 let movingWalls = []; // <-- Declare globally
 
+
 function preload() {
   bricks = loadImage("brick.jpg");
   grass = loadImage("thumbnail.jpg"); // the concrete texture
@@ -43,7 +44,7 @@ function preload() {
   bgSong = loadSound("tooker to the o.mp3");
   skibidiImg = loadImage("skibidiopp.png");
   treeImg = loadImage("usetree.png");
-  oppTexture = loadImage("king vons opp.png");
+  oppWallTexture = loadImage("king vons opp.png");
 }
 
 
@@ -112,25 +113,23 @@ function setup() {
   // Add more as needed
 
   // Add initial moving wall
-  movingWalls.push(new MovingWall(0, 0, 0, 100, 100, 20, 2, 0, 0)); // Moves along X
-  movingWalls.push(new MovingWall(500, 230, 0, 400, 200, 40)); // Example position and size
-  movingWalls.push(new MovingWall(-1000, 230, 800, 400, 200, 40)); // In front of player, at floor height
+ 
 }
 
 
 
 function draw() {
-  // if (!gameStarted) {
-  //   // Start screen
-  //   background(30, 30, 40);
-  //   fill(255);
-  //   textAlign(CENTER, CENTER);
-  //   textSize(64);
-  //   text("KING VON GAME", width / 2, height / 2 - 60);
-  //   textSize(32);
-  //   text("Press SPACE to Start", width / 2, height / 2 + 20);
-  //   return; // Pause the game until started
-  // }
+  if (!gameStarted) {
+    // Start screen
+    background(30, 30, 40);
+    fill(255);
+    textAlign(CENTER, CENTER);
+    textSize(64);
+    text("KING VON GAME", width / 2, height / 2 - 60);
+    textSize(32);
+    text("Press SPACE to Start", width / 2, height / 2 + 20);
+    return; // Pause the game until started
+  }
 
   // Place the sign in front of the spawn point
   push();
@@ -222,17 +221,37 @@ pop();
 
   pop();
 
+  // Draw floors
   for (let i = 0; i < floorArray.length; i++) {
     floorArray[i].display();
   }
 
-  // Draw the opponent in 3D world space
-  // if (opponent) {
-  //   opponent.move();
-  //   opponent.display();
-  // }
+  // Draw walls
+  for (let i = 0; i < wallArray.length; i++) {
+    wallArray[i].display();
+  }
 
-  //maze building camera
+  // Draw skibidi walls
+  for (let wall of skibidiWalls) {
+    wall.display();
+  }
+
+  // Draw trees
+  for (let t of trees) {
+    t.display();
+  }
+
+  // Draw moving walls
+  for (let mw of movingWalls) {
+    mw.move();
+    mw.display();
+  }
+
+  // Draw the 3D guy
+  guy.move();
+  guy.display();
+
+  // maze building camera
   bCam.lookAt(0, 0, 0);
   //setCamera(bCam);
 
@@ -304,22 +323,27 @@ pop();
   //cam.tilt(movedY*0.01);
   cam.move(x, 0, z);
   // console.log(cam.eyeZ);
-
-  // Draw crosshair on 2D graphics buffer
   
+  // --- 2D Overlay ---
+  resetMatrix();
+  hint(DISABLE_DEPTH_TEST);
 
-  
+  // Draw a simple crosshair
+  fill(255, 0, 0);
+  noStroke();
+  ellipse(width/2, height/2, 20, 20);
 
-  // Overlay the crosshair on the WEBGL canvas
-  imageMode(CORNER);
-  image(crosshairGfx, 0, 0, width, height);
+  // Draw a health bar
+  fill(0, 0, 0, 180);
+  rect(width/2 - 100, height - 60, 200, 30, 10);
+  fill(0, 255, 0);
+  rect(width/2 - 100, height - 60, 150, 30, 10); // Example: 150 health
 
-  
-}
+  // Draw a test square on the overlay
+  fill(0, 0, 255, 180); // Semi-transparent blue
+  rect(width/2 - 50, height/2 - 50, 100, 100);
 
-function windowResized() {
-  resizeCanvas(windowWidth, windowHeight);
-  crosshairGfx = createGraphics(windowWidth, windowHeight);
+  hint(ENABLE_DEPTH_TEST);
 }
 
 class FloorConcrete {
@@ -340,84 +364,6 @@ class FloorConcrete {
   }
 }
 
-class Opponent {
-  constructor(x, y, z) {
-    this.x = x;
-    this.y = y;
-    this.z = z;
-    this.size = 100;
-    this.alive = true;
-    this.dirX = random([-1, 1]);
-    this.dirZ = random([-1, 1]);
-    this.speed = 2;
-  }
-
-  move() {
-    if (!this.alive) return;
-
-    // Try to move
-    let nextX = this.x + this.dirX + this.speed;
-    let nextZ = this.z + this.dirZ + this.speed;
-
-    // Check for wall collision
-    let willCollide = false;
-    for (let i = 0; i < wallArray.length; i++) {
-      let wall = wallArray[i];
-      // Simple AABB collision
-      if (
-        nextX + this.size/2 > wall.x - wall.w/2 &&
-        nextX - this.size/2 < wall.x + wall.w/2 &&
-        this.y + this.size > wall.y - wall.h/2 &&
-        this.y < wall.y + wall.h/2 &&
-        nextZ + this.size/2 > wall.z - wall.d/2 &&
-        nextZ - this.size/2 < wall.z + wall.d/2
-      ) {
-        willCollide = true;
-        break;
-      }
-    }
-
-    // If collision, pick a new random direction
-    if (willCollide) {
-      this.dirX = random([-1, 0, 1]);
-      this.dirZ = random([-1, 0, 1]);
-      // Don't let both be zero
-      if (this.dirX === 0 && this.dirZ === 0) this.dirX = 1;
-    } else {
-      // Move if no collision
-      this.x = nextX;
-      this.z = nextZ;
-    }
-  }
-
-  display() {
-    if (!this.alive) return;
-    push();
-    translate(this.x, this.y, this.z);
-    fill(255, 0, 0);
-    box(this.size, this.size * 2, this.size);
-    pop();
-  }
-
-  isTargeted(cam) {
-    let dx = this.x - cam.eyeX;
-    let dy = this.y - cam.eyeY;
-    let dz = this.z - cam.eyeZ;
-    let distToOpponent = Math.sqrt(dx*dx + dy*dy + dz*dz);
-
-    let cx = cam.centerX - cam.eyeX;
-    let cy = cam.centerY - cam.eyeY;
-    let cz = cam.centerZ - cam.eyeZ;
-    let camMag = Math.sqrt(cx*cx + cy*cy + cz*cz);
-
-    cx /= camMag; cy /= camMag; cz /= camMag;
-    dx /= distToOpponent; dy /= distToOpponent; dz /= distToOpponent;
-
-    let dot = cx*dx + cy*dy + cz*dz;
-    return dot > 0.995 && distToOpponent < 2000;
-  }
-}
-
 function keyPressed() {
   // Start the game on SPACE
   if (!gameStarted && key === ' ') {
@@ -426,31 +372,8 @@ function keyPressed() {
   }
 
 }
-class Enemy {
-constructor(x,z) {
-this.x = x;
-this.y = z;
-this.r = 50;
 
 
-
-
-
-}
-
-
-
-
-
-
-}
-
-function mousePressed() {
-  if (bgSong && !bgSong.isPlaying()) {
-    bgSong.setLoop(true);
-    bgSong.play();
-  }
-}
 
 class Fence extends wall {
   constructor(x, y, z, w = 400, h = 200, d = 20) {
@@ -500,104 +423,3 @@ class Fence extends wall {
     pop();
   }
 }
-
-
-class SkibidiWall {
-  constructor(x, y, z, w = 200, h = 200) {
-    this.x = x;
-    this.y = y;
-    this.z = z;
-    this.w = w;
-    this.h = h;
-  }
-
-  display() {
-    push();
-    translate(this.x, this.y, this.z);
-    // Billboard: always face the camera horizontally
-    let v = createVector(cam.eyeX - this.x, 0, cam.eyeZ - this.z);
-    let angleY = atan2(v.x, v.z);
-    rotateY(angleY);
-    texture(skibidiImg);
-    // Draw a single-sided plane (no fill, just texture)
-    plane(this.w, this.h);
-    pop();
-  }
-}
-
-class Tree {
-  constructor(x, y, z, w = 120, h = 180) {
-    this.x = x;
-    this.y = y;
-    this.z = z;
-    this.w = w;
-    this.h = h;
-  }
-
-  display() {
-    push();
-    translate(this.x, this.y, this.z);
-    // Billboard: always face the camera horizontally
-    let v = createVector(cam.eyeX - this.x, 0, cam.eyeZ - this.z);
-    let angleY = atan2(v.x, v.z);
-    rotateY(angleY);
-    texture(treeImg);
-    noStroke();
-    plane(this.w, this.h);
-    pop();
-  }
-}
-
-class MovingWall {
-  constructor(x, y, z, w, h, d, speedX = 0, speedY = 0, speedZ = 0) {
-    this.x = x;
-    this.y = y;
-    this.z = z;
-    this.w = w;
-    this.h = h;
-    this.d = d;
-    this.speedX = speedX;
-    this.speedY = speedY;
-    this.speedZ = speedZ;
-  }
-
-  move() {
-    this.x += this.speedX;
-    this.y += this.speedY;
-    this.z += this.speedZ;
-    // Add bounds or direction change logic if needed
-  }
-
-  display() {
-    push();
-    translate(this.x, this.y, this.z);
-
-    // Draw the main wall (without texture)
-    fill(150, 0, 0);
-    box(this.w, this.h, this.d);
-
-    // Draw the textured front face only
-    push();
-    translate(0, 0, this.d / 2 + 0.1); // Slightly in front to avoid z-fighting
-    texture(oppTexture);
-    plane(this.w, this.h);
-    pop();
-
-    pop();
-  }
-}
-
-
-for (let wall of skibidiWalls) {
-  wall.display();
-}
-
-for (let t of trees) {
-  t.display();
-}
-
-for (let mw of movingWalls) {
-  mw.move();
-  mw.display();
-}
-

@@ -1,0 +1,110 @@
+let wallArray = [];
+let floorArray = [];
+let movingWalls = [];
+let trees = [];
+let cam;
+let crosshairGfx;
+
+function preload() {
+  // Load any textures you need, e.g.:
+  // concrete = loadImage("concrete.png");
+  // skyboxImgs = { right: ..., left: ..., top: ..., ... };
+}
+
+function setup() {
+  createCanvas(windowWidth, windowHeight, WEBGL);
+
+  // Example camera setup (adjust as needed)
+  cam = createCamera();
+
+  // Example wall and floor
+  wallArray.push(new MovingWall(0, 230, 0, 400, 200, 40));
+  floorArray.push(new FloorConcrete(0, 250, 0, 1000, 40, 1000));
+
+  crosshairGfx = createGraphics(windowWidth, windowHeight);
+  crosshairGfx.clear();
+}
+
+function draw() {
+  background(120);
+
+  // Camera controls (example)
+  // cam.move(...);
+
+  // Draw floors
+  for (let f of floorArray) {
+    f.display();
+  }
+
+  // Draw walls
+  for (let w of wallArray) {
+    w.display();
+  }
+
+  // Draw moving walls
+  for (let mw of movingWalls) {
+    mw.move();
+    mw.display();
+  }
+
+  // Draw trees
+  for (let t of trees) {
+    t.display();
+  }
+
+  // Overlay crosshair
+  imageMode(CORNER);
+  image(crosshairGfx, 0, 0, width, height);
+}
+
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
+  crosshairGfx = createGraphics(windowWidth, windowHeight);
+}
+
+// Example class definitions
+class MovingWall {
+  constructor(x, y, z, w, h, d, speedX = 0, speedY = 0, speedZ = 0) {
+    this.x = x;
+    this.y = y;
+    this.z = z;
+    this.w = w;
+    this.h = h;
+    this.d = d;
+    this.speedX = speedX;
+    this.speedY = speedY;
+    this.speedZ = speedZ;
+  }
+  move() {
+    this.x += this.speedX;
+    this.y += this.speedY;
+    this.z += this.speedZ;
+  }
+  display() {
+    push();
+    translate(this.x, this.y, this.z);
+    fill(150, 0, 0);
+    box(this.w, this.h, this.d);
+    pop();
+  }
+}
+
+class FloorConcrete {
+  constructor(x, y, z, w, h, d) {
+    this.x = x;
+    this.y = y;
+    this.z = z;
+    this.w = w;
+    this.h = h;
+    this.d = d;
+  }
+  display() {
+    push();
+    translate(this.x, this.y, this.z);
+    fill(100);
+    box(this.w, this.h, this.d);
+    pop();
+  }
+}
+
+// Add your Tree, Fence, etc. classes here as needed
