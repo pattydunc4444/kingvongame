@@ -7,6 +7,7 @@ var grass;
 var z, x, y;
 var bricks;
 var wallArray = [];
+ var bushArray = [];
 var lastGoodX = 0;
 var lastGoodY = 0;
 var lastGoodZ = 0;
@@ -32,13 +33,14 @@ let movingWalls = []; // <-- Declare globally
 function preload() {
   bricks = loadImage("brick.jpg");
   grass = loadImage("thumbnail.jpg"); // the concrete texture
-  concrete = loadImage("grass.jpg")
-  skyboxImgs.right = loadImage('oblockRight.jpg');
-  skyboxImgs.left = loadImage('oblockLeft.jpg');
+  concrete = loadImage("grass.jpg"); // the grass texture
+  tree = loadImage("Tree.png"); // the tree texture
+  skyboxImgs.right = loadImage('sky_right.jpg');
+  skyboxImgs.left = loadImage('sky_left.jpg');
   skyboxImgs.top = loadImage('sky_top.jpg');
   skyboxImgs.bottom = loadImage('sky_bottom.jpg');
-  skyboxImgs.front = loadImage('oblockFront.jpg');
-  skyboxImgs.back = loadImage('oblockrear.jpg');
+  skyboxImgs.front = loadImage('sky_front.jpg');
+  skyboxImgs.back = loadImage('sky_back.jpg');
   gunImg = loadImage('gun.png'); // Load your gun image here
   fenceTex = loadImage("fence.png");
   bgSong = loadSound("tooker to the o.mp3");
@@ -63,7 +65,7 @@ function setup() {
   bCam.setPosition(0, -3000, 200);
   //cam is the player camera
   cam = createCamera();
-  cam.setPosition(-1000, -10, 1100);
+  cam.setPosition(400, 0, 800);
 
 
   //the oblock building
@@ -71,19 +73,12 @@ function setup() {
   // wallArray.push(new wall(400, 0, 400));
   for (let i = 0; i < 3; i++) {
     // wallArray.push(new wall(400 - 400 * i, 0, -1200, 1));
-    wallArray.push(new wall(0 , 0, -1355, 1200,1000,50,));
-     wallArray.push(new wall(0, 0, 550, 1200, 1000,50));
-     wallArray.push(new wall(-1100, 0, -880, 1000, 1000,50));
-      wallArray.push(new wall(-1200, 0, 75, 1200, 1000,50));
-       wallArray.push(new wall(575, 0, -400, 50, 1000,1900));
-       wallArray.push(new wall(-575, 0, -1000, 50, 1000,650));
-          wallArray.push(new wall(-575, 0, 300, 50, 1000,500));
-       wallArray.push(new wall(-1785, 0, -400, 25, 1000,1000));
+    wallArray.push(new wall(0 , 0, -1355, 1200,400,50,));
+     wallArray.push(new wall(0, 0, 550, 1200, 400,50));
+       wallArray.push(new wall(575, 0, -400, 50, 400,1900));
   }
   floorArray.push(new floor(0, 225, -400, 1200, 40, 2000)); // Grass floor
-  floorArray.push(new floor(0, -525, -400, 1200, 40, 2000));
-  floorArray.push(new floor(-1200, 225, -400, 1200, 40, 1000));
-   floorArray.push(new floor(-1200, -525, -400, 1200, 40, 1000)); // Grass floor
+  floorArray.push(new floor(0, -225, -400, 1200, 40, 2000)); // Grass floor
   floorArray.push(new FloorConcrete(0, 230, 0, 7000, 40, 7000)); // Concrete floor, 5 units below, fits skybox
   crosshairGfx = createGraphics(windowWidth, windowHeight);
   crosshairGfx.clear();
@@ -174,7 +169,7 @@ pop();
 
   // Right
   push();
-  translate(size/2, 0, 0);
+  translate(size / 2, 0, 0);
   rotateY(HALF_PI);
   texture(skyboxImgs.right);
   plane(size, size);
@@ -182,7 +177,7 @@ pop();
 
   // Left
   push();
-  translate(-size/2, 0, 0);
+  translate(-size / 2, 0, 0);
   rotateY(-HALF_PI);
   texture(skyboxImgs.left);
   plane(size, size);
@@ -190,7 +185,7 @@ pop();
 
   // Top
   push();
-  translate(0, -size/2, 0);
+  translate(0, -size / 2, 0);
   rotateX(-HALF_PI);
   texture(skyboxImgs.top);
   plane(size, size);
@@ -198,7 +193,7 @@ pop();
 
   // Bottom
   push();
-  translate(0, size/2, 0);
+  translate(0, size / 2, 0);
   rotateX(HALF_PI);
   texture(skyboxImgs.bottom);
   plane(size, size);
@@ -206,14 +201,14 @@ pop();
 
   // Front
   push();
-  translate(0, 0, -size/2);
+  translate(0, 0, -size / 2);
   texture(skyboxImgs.front);
   plane(size, size);
   pop();
 
   // Back
   push();
-  translate(0, 0, size/2);
+  translate(0, 0, size / 2);
   rotateY(PI);
   texture(skyboxImgs.back);
   plane(size, size);
@@ -283,23 +278,26 @@ pop();
     lastGoodZ = (cam.eyeZ);
     //console.log(lastGoodX+" "+lastGoodZ);
   }
+let currentSpeed = keyIsDown(SHIFT) ? sprintSpeed : moveSpeed;
+x = 0;
+z = 0;
 
 
   //wasd controls for strafing
   if (keyIsDown(83)) {
-    z = 15;
+    z = 10;
   }
 
   if (keyIsDown(87)) {
-    z = -15;
+    z = -10;
   }
 
   if (keyIsDown(65)) {
-    x = -15;
+    x = -10;
   }
 
   if (keyIsDown(68)) {
-    x = 15;
+    x = 10;
   }
 
   //puts player back to last place not touching a wall 
@@ -345,6 +343,7 @@ pop();
 
   hint(ENABLE_DEPTH_TEST);
 }
+
 
 class FloorConcrete {
   constructor(x, y, z, w, h, d) {
