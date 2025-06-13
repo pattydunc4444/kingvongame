@@ -82,7 +82,7 @@ function setup() {
   floorArray.push(new FloorConcrete(0, 230, 0, 7000, 40, 7000)); // Concrete floor, 5 units below, fits skybox
   crosshairGfx = createGraphics(windowWidth, windowHeight);
   crosshairGfx.clear();
-  opponent = new Opponent(0, 230, -1000); // Y=230 matches your concrete floor
+  // opponent = new Opponent(0, 230, -1000); // Y=230 matches your concrete floor
 
   // Add a fence at position (x, y, z)
   wallArray.push(new Fence(0, 10, 3500, 8000, 400, 20));
@@ -90,7 +90,7 @@ function setup() {
     wallArray.push(new Fence(-3950, 10, 10, 1000, 400, 8000));
      wallArray.push(new Fence(3950, 10, 10, 1000, 400, 8000));
    wallArray.push(new Fence(-2650, 10, 0, 1750, 400, 10));
-  skibidiWalls.push(new SkibidiWall(0, 0 + 0, 0, 0, 0));
+  // skibidiWalls.push(new SkibidiWall(0, 0 + 0, 0, 0, 0));
   if (bgSong && !bgSong.isPlaying()) {
     bgSong.setLoop(true);
     bgSong.play();
@@ -103,8 +103,8 @@ function setup() {
   fill(100)
   graphics.text("Defeat the Skibidi Henchmen\nto reach the boss, lil t ja bro", graphics.width / 2, graphics.height / 2);
   
-  trees.push(new Tree(0, 0, 0)); // Example position
-  trees.push(new Tree(0, 0, 0));
+  // trees.push(new Tree(0, 0, 0)); // Example position
+  // trees.push(new Tree(0, 0, 0));
   // Add more as needed
 
   // Add initial moving wall
