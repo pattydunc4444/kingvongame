@@ -47,18 +47,22 @@ function preload() {
   skibidiImg = loadImage("skibidiopp.png");
   treeImg = loadImage("usetree.png");
   oppWallTexture = loadImage("king vons opp.png");
+  customFont = loadFont("LoveDays-2v7Oe.ttf"); // Load your custom font if needed
 }
 
 
 function setup() {
+
   createCanvas(windowWidth, windowHeight, WEBGL);
   y = 0;
   x = 0;
   z = 0;
-
+  textFont(customFont, 32);
   //sign graphics
+  
   graphics = createGraphics(800, 400);
   graphics2 = createGraphics(420, 400);
+  graphics2.textFont(customFont);
 
   //bcam is a birds eye view that helps when placing blocks  
   bCam = createCamera();
@@ -95,7 +99,8 @@ function setup() {
     bgSong.setLoop(true);
     bgSong.play();
   }
-  wallArray.push(new OppWall(0, -230, 0, 400, 400, 400)); // Example position and size
+  // wallArray.push(new OppWall(0, -230, 0, 400, 400, 400)); // Example position and size
+  graphics.textFont(customFont);
   graphics.background(0, 0, 0, 200); // semi-transparent black
   graphics.textAlign(CENTER, CENTER);
   graphics.textSize(32);
@@ -242,9 +247,7 @@ pop();
     mw.display();
   }
 
-  // Draw the 3D guy
-  guy.move();
-  guy.display();
+
 
   // maze building camera
   bCam.lookAt(0, 0, 0);
@@ -278,9 +281,9 @@ pop();
     lastGoodZ = (cam.eyeZ);
     //console.log(lastGoodX+" "+lastGoodZ);
   }
-let currentSpeed = keyIsDown(SHIFT) ? sprintSpeed : moveSpeed;
-x = 0;
-z = 0;
+// let currentSpeed = keyIsDown(SHIFT) ? sprintSpeed : moveSpeed;
+// x = 0;
+// z = 0;
 
 
   //wasd controls for strafing
@@ -324,7 +327,7 @@ z = 0;
   
   // --- 2D Overlay ---
   resetMatrix();
-  hint(DISABLE_DEPTH_TEST);
+  // hint(DISABLE_DEPTH_TEST);
 
   // Draw a simple crosshair
   fill(255, 0, 0);
@@ -341,7 +344,7 @@ z = 0;
   fill(0, 0, 255, 180); // Semi-transparent blue
   rect(width/2 - 50, height/2 - 50, 100, 100);
 
-  hint(ENABLE_DEPTH_TEST);
+  // hint(ENABLE_DEPTH_TEST);
 }
 
 
@@ -363,23 +366,23 @@ class FloorConcrete {
   }
 }
 
-class OppWall {
-  constructor(x, y, z, w, h, d) {
-    this.x = x;
-    this.y = y;
-    this.z = z;
-    this.w = w;
-    this.h = h;
-    this.d = d;
-  }
-  display() {
-    push();
-    translate(this.x, this.y, this.z);
-    texture(oppWallTexture); // Uses the loaded "king vons opp.png"
-    box(this.w, this.h, this.d);
-    pop();
-  }
-}
+// class OppWall {
+//   constructor(x, y, z, w, h, d) {
+//     this.x = x;
+//     this.y = y;
+//     this.z = z;
+//     this.w = w;
+//     this.h = h;
+//     this.d = d;
+//   }
+//   display() {
+//     push();
+//     translate(this.x, this.y, this.z);
+//     texture(oppWallTexture); // Uses the loaded "king vons opp.png"
+//     box(this.w, this.h, this.d);
+//     pop();
+//   }
+// }
 
 function keyPressed() {
   // Start the game on SPACE
@@ -389,6 +392,3 @@ function keyPressed() {
   }
 
 }
-
-
-
