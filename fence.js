@@ -4,6 +4,7 @@ class Fence extends wall {
   }
 
   display() {
+    texture(fenceTex); // Use a texture for the fence, must be loaded in preload()
     // Draw a fence-like appearance (e.g., thin bars)
     push();
     translate(this.x, this.y, this.z);
@@ -14,6 +15,7 @@ class Fence extends wall {
     let numBars = 6;
     for (let i = 0; i < numBars; i++) {
       let barX = -this.w/2 + (i * this.w/(numBars-1));
+      texture(fenceTex);
       push();
       translate(barX, 0, 0);
       box(this.w/20, this.h, this.d/2);

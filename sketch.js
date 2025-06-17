@@ -77,21 +77,28 @@ function setup() {
   //the oblock building
   //wallArray.push(new wall(0,0,0));
   // wallArray.push(new wall(400, 0, 400));
-  for (let i = 0; i < 3; i++) {
+  // for (let i = 0; i < 3; i++) {
     // wallArray.push(new wall(400 - 400 * i, 0, -1200, 1));
     wallArray.push(new wall(0 , 0, -1355, 1200,400,50,));
      wallArray.push(new wall(0, 0, 550, 1200, 400,50));
+     wallArray.push(new wall(-1100, 0, -880, 1000, 400,50));
+      wallArray.push(new wall(-1200, 0, 75, 1200, 400,50));
        wallArray.push(new wall(575, 0, -400, 50, 400,1900));
-  }
+       wallArray.push(new wall(-575, 0, -1000, 50, 400,650));
+          wallArray.push(new wall(-575, 0, 300, 50, 400,500));
+       wallArray.push(new wall(-1785, 0, -400, 25, 400,1000));
+  // }
   floorArray.push(new floor(0, 225, -400, 1200, 40, 2000)); // Grass floor
-  floorArray.push(new floor(0, -225, -400, 1200, 40, 2000)); // Grass floor
+  floorArray.push(new floor(0, -225, -400, 1200, 40, 2000));
+  floorArray.push(new floor(-1200, 225, -400, 1200, 40, 1000));
+   floorArray.push(new floor(-1200, -225, -400, 1200, 40, 1000)); // Grass floor
   floorArray.push(new FloorConcrete(0, 230, 0, 7000, 40, 7000)); // Concrete floor, 5 units below, fits skybox
   crosshairGfx = createGraphics(windowWidth, windowHeight);
   crosshairGfx.clear();
   // opponent = new Opponent(0, 230, -1000); // Y=230 matches your concrete floor
 
   // Add a fence at position (x, y, z)
-  wallArray.push(new Fence(0, 10, 3500, 8000, 400, 20));
+ wallArray.push(new Fence(0, 10, 3500, 8000, 400, 20));
   wallArray.push(new Fence(0, 10, -3500, 8000, 400, 20));
     wallArray.push(new Fence(-3950, 10, 10, 1000, 400, 8000));
      wallArray.push(new Fence(3950, 10, 10, 1000, 400, 8000));
