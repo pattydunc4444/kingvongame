@@ -386,9 +386,10 @@ class FloorConcrete {
 
 function keyPressed() {
   // Start the game on SPACE
-  if (!gameStarted && key === ' ') {
+  if (!gameStarted && key === ' '){
     gameStarted = true;
     return;
   }
 
 }
+
