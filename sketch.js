@@ -28,6 +28,8 @@ let skibidiWalls = [];
 let trees = [];
 let oppTexture; // Declare globally
 let movingWalls = []; // <-- Declare globally
+let playerHealth = 150; // Max health (example: 150)
+let maxHealth = 150;
 
 
 function preload() {
