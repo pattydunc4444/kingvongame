@@ -44,11 +44,11 @@ function preload() {
   skyboxImgs.front = loadImage('sky_front.jpg');
   skyboxImgs.back = loadImage('sky_back.jpg');
   gunImg = loadImage('gun.png'); // Load your gun image here
-  fenceTex = loadImage("fence.png");
+  fenceTex = loadImage("green.jpg");
   bgSong = loadSound("tooker to the o.mp3");
   skibidiImg = loadImage("skibidiopp.png");
   treeImg = loadImage("usetree.png");
-  oppWallTexture = loadImage("king vons opp.png");
+  oppTexture = loadImage("king vons opp.png");
   customFont = loadFont("LoveDays-2v7Oe.ttf"); // Load your custom font if needed
 }
 
@@ -96,14 +96,16 @@ function setup() {
   crosshairGfx = createGraphics(windowWidth, windowHeight);
   crosshairGfx.clear();
   // opponent = new Opponent(0, 230, -1000); // Y=230 matches your concrete floor
-
+  
   // Add a fence at position (x, y, z)
  wallArray.push(new Fence(0, 10, 3500, 8000, 400, 20));
   wallArray.push(new Fence(0, 10, -3500, 8000, 400, 20));
-    wallArray.push(new Fence(-3950, 10, 10, 1000, 400, 8000));
-     wallArray.push(new Fence(3950, 10, 10, 1000, 400, 8000));
-   wallArray.push(new Fence(-2650, 10, 0, 1750, 400, 10));
+    wallArray.push(new Fence(-3950, 10, 10, 1000, 400, 15000));
+     wallArray.push(new Fence(3950, 10, 10, 1000, 400, 15000));
+   wallArray.push(new Fence(-5650, 10, 0, 1750, 400, 10));
   // skibidiWalls.push(new SkibidiWall(0, 0 + 0, 0, 0, 0));
+
+  
   if (bgSong && !bgSong.isPlaying()) {
     bgSong.setLoop(true);
     bgSong.play();
@@ -375,23 +377,25 @@ class FloorConcrete {
   }
 }
 
-// class OppWall {
-//   constructor(x, y, z, w, h, d) {
-//     this.x = x;
-//     this.y = y;
-//     this.z = z;
-//     this.w = w;
-//     this.h = h;
-//     this.d = d;
-//   }
-//   display() {
-//     push();
-//     translate(this.x, this.y, this.z);
-//     texture(oppWallTexture); // Uses the loaded "king vons opp.png"
-//     box(this.w, this.h, this.d);
-//     pop();
-//   }
-// }
+class OppWall {
+  constructor(x, y, z, w, h, d) {
+    this.x = x;
+    this.y = y;
+    this.z = z;
+    this.w = w;
+    this.h = h;
+    this.d = d;
+  }
+
+  display() {
+    push();
+    translate(this.x, this.y, this.z);
+    texture(oppTexture); // Make sure oppTexture is loaded with "king vons opp.png"
+    noStroke();
+    box(this.w, this.h, this.d);
+    pop();
+  }
+}
 
 function keyPressed() {
   // Start the game on SPACE

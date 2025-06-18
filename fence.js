@@ -18,7 +18,7 @@ class Fence extends wall {
       texture(fenceTex);
       push();
       translate(barX, 0, 0);
-      box(this.w/20, this.h, this.d/2);
+      box(this.w/2, this.h, this.d/2);
       pop();
     }
     // Draw top and bottom rails
