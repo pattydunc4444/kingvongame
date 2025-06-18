@@ -26,7 +26,7 @@ let treeImg;
 let gameStarted = false; // Add this at the top with your globals
 let skibidiWalls = [];
 let trees = [];
-let oppTexture; // Declare globally
+let oppTexture;
 let movingWalls = []; // <-- Declare globally
 let playerHealth = 150; // Max health (example: 150)
 let maxHealth = 150;
@@ -37,24 +37,27 @@ function preload() {
   grass = loadImage("thumbnail.jpg"); // the concrete texture
   concrete = loadImage("grass.jpg"); // the grass texture
   tree = loadImage("Tree.png"); // the tree texture
-  skyboxImgs.right = loadImage('sky_right.jpg');
-  skyboxImgs.left = loadImage('sky_left.jpg');
+  skyboxImgs.right = loadImage('oblockRight.jpg');
+  skyboxImgs.left = loadImage('oblockleft.jpg');
   skyboxImgs.top = loadImage('sky_top.jpg');
   skyboxImgs.bottom = loadImage('sky_bottom.jpg');
-  skyboxImgs.front = loadImage('sky_front.jpg');
-  skyboxImgs.back = loadImage('sky_back.jpg');
+  skyboxImgs.front = loadImage('oblockFront.jpg');
+  skyboxImgs.back = loadImage('oblockrear.jpg');
   gunImg = loadImage('gun.png'); // Load your gun image here
   fenceTex = loadImage("green.jpg");
   bgSong = loadSound("tooker to the o.mp3");
   skibidiImg = loadImage("skibidiopp.png");
   treeImg = loadImage("usetree.png");
-  oppTexture = loadImage("king vons opp.png");
+  oppTexture = loadImage("opp.jpg");
   customFont = loadFont("LoveDays-2v7Oe.ttf"); // Load your custom font if needed
 }
 
 
 function setup() {
+   
 
+
+  
   createCanvas(windowWidth, windowHeight, WEBGL);
   y = 0;
   x = 0;
@@ -71,9 +74,9 @@ function setup() {
   bCam.setPosition(0, -3000, 200);
   //cam is the player camera
   cam = createCamera();
-  cam.setPosition(400, 0, 800);
+  cam.setPosition(400, 0, 1000);
 
-
+  
   //the oblock building
   //wallArray.push(new wall(0,0,0));
   // wallArray.push(new wall(400, 0, 400));
@@ -96,15 +99,15 @@ function setup() {
   crosshairGfx = createGraphics(windowWidth, windowHeight);
   crosshairGfx.clear();
   // opponent = new Opponent(0, 230, -1000); // Y=230 matches your concrete floor
-  
+   
   // Add a fence at position (x, y, z)
  wallArray.push(new Fence(0, 10, 3500, 8000, 400, 20));
   wallArray.push(new Fence(0, 10, -3500, 8000, 400, 20));
     wallArray.push(new Fence(-3950, 10, 10, 1000, 400, 15000));
      wallArray.push(new Fence(3950, 10, 10, 1000, 400, 15000));
    wallArray.push(new Fence(-5650, 10, 0, 1750, 400, 10));
-  // skibidiWalls.push(new SkibidiWall(0, 0 + 0, 0, 0, 0));
-
+  // skibidiWalls.push(new SkibidiWall(0, 0 + 0, 0, 0, 0)); 
+    
   
   if (bgSong && !bgSong.isPlaying()) {
     bgSong.setLoop(true);
@@ -112,12 +115,12 @@ function setup() {
   }
   // wallArray.push(new OppWall(0, -230, 0, 400, 400, 400)); // Example position and size
   graphics.textFont(customFont);
-  graphics.background(0, 0, 0, 200); // semi-transparent black
+  graphics.background(0, 0, 0, 500); // semi-transparent black
   graphics.textAlign(CENTER, CENTER);
-  graphics.textSize(32);
+  graphics.textSize(23.5);
   graphics.fill(255, 255, 0);
   fill(100)
-  graphics.text("Defeat the Skibidi Henchmen\nto reach the boss, lil t ja bro", graphics.width / 2, graphics.height / 2);
+  graphics.text("lil t is hiding, find him and atomize him f to shoot to save oblock ", graphics.width / 2, graphics.height / 2);
   
   // trees.push(new Tree(0, 0, 0)); // Example position
   // trees.push(new Tree(0, 0, 0));
@@ -125,6 +128,7 @@ function setup() {
 
   // Add initial moving wall
  
+
 }
 
 
@@ -377,6 +381,7 @@ class FloorConcrete {
   }
 }
 
+// Simple touchless wall class
 class OppWall {
   constructor(x, y, z, w, h, d) {
     this.x = x;
@@ -390,7 +395,11 @@ class OppWall {
   display() {
     push();
     translate(this.x, this.y, this.z);
-    texture(oppTexture); // Make sure oppTexture is loaded with "king vons opp.png"
+    if (oppTexture) {
+      texture(oppTexture);
+    } else {
+      fill(255, 0, 0);
+    }
     noStroke();
     box(this.w, this.h, this.d);
     pop();
