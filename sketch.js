@@ -90,7 +90,7 @@ function setup() {
        wallArray.push(new wall(-575, 0, -1000, 50, 400,650));
           wallArray.push(new wall(-575, 0, 300, 50, 400,500));
        wallArray.push(new wall(-1785, 0, -400, 25, 400,1000));
-  // }
+
   floorArray.push(new floor(0, 225, -400, 1200, 40, 2000)); // Grass floor
   floorArray.push(new floor(0, -225, -400, 1200, 40, 2000));
   floorArray.push(new floor(-1200, 225, -400, 1200, 40, 1000));
@@ -235,7 +235,7 @@ pop();
   pop();
 
   pop();
-
+  
   // Draw floors
   for (let i = 0; i < floorArray.length; i++) {
     floorArray[i].display();
