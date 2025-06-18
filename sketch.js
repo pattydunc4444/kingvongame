@@ -30,7 +30,8 @@ let oppTexture; // Declare globally
 let movingWalls = []; // <-- Declare globally
 let playerHealth = 150; // Max health (example: 150)
 let maxHealth = 150;
-
+let bushTexture;
+let bullets = [];
 
 function preload() {
   bricks = loadImage("brick.jpg");
@@ -49,6 +50,7 @@ function preload() {
   skibidiImg = loadImage("skibidiopp.png");
   treeImg = loadImage("usetree.png");
   oppWallTexture = loadImage("king vons opp.png");
+  bushTexture = loadImage("davink.jfif");
   customFont = loadFont("LoveDays-2v7Oe.ttf"); // Load your custom font if needed
 }
 
@@ -356,7 +358,12 @@ pop();
   // hint(ENABLE_DEPTH_TEST);
 }
 
-
+function mousePressed() {
+  // Get camera direction
+  let dir = createVector(cam.centerX - cam.eyeX, cam.centerY - cam.eyeY, cam.centerZ - cam.eyeZ).normalize();
+  // Create bullet at camera position, moving forward
+  bullets.push(new Bullet(cam.eyeX, cam.eyeY, cam.eyeZ, dir));
+}
 class FloorConcrete {
   constructor(x, y, z, w, h, d) {
     this.x = x;
@@ -387,7 +394,7 @@ class FloorConcrete {
 //   display() {
 //     push();
 //     translate(this.x, this.y, this.z);
-//     texture(oppWallTexture); // Uses the loaded "king vons opp.png"
+//     texture(oppWallTexture); // Uses t he loaded "king vons opp.png"
 //     box(this.w, this.h, this.d);
 //     pop();
 //   }
@@ -400,5 +407,37 @@ function keyPressed() {
     return;
   }
 
+}
+
+class Bullet {
+  constructor(x, y, z, dir) {
+    this.pos = createVector(x, y, z);
+    this.dir = dir.copy().normalize();
+    this.speed = 30;
+    this.size = 20;
+    this.alive = true;
+  }
+
+  update() {
+    this.pos.add(p5.Vector.mult(this.dir, this.speed));
+    // Optionally, remove bullet if it goes too far
+    if (this.pos.mag() > 10000) this.alive = false;
+  }
+
+  display() {
+    push();
+    translate(this.pos.x, this.pos.y, this.pos.z);
+    fill(255, 0, 0);
+    noStroke();
+    box(this.size, this.size, this.size);
+    pop();
+  }
+}
+
+// Update and display bullets
+for (let i = bullets.length - 1; i >= 0; i--) {
+  bullets[i].update();
+  bullets[i].display();
+  if (!bullets[i].alive) bullets.splice(i, 1);
 }
 

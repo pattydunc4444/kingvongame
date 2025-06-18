@@ -33,3 +33,4 @@ class Fence extends wall {
     pop();
   }
 }
+
