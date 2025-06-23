@@ -30,6 +30,8 @@ let oppTexture;
 let movingWalls = []; // <-- Declare globally
 let playerHealth = 150; // Max health (example: 150)
 let maxHealth = 150;
+let winBlock;      // The clickable square
+let showWinSign = false;
 
 
 function preload() {
@@ -45,7 +47,7 @@ function preload() {
   skyboxImgs.back = loadImage('oblockrear.jpg');
   gunImg = loadImage('gun.png'); // Load your gun image here
   fenceTex = loadImage("green.jpg");
-  bgSong = loadSound("tooker to the o.mp3");
+  // bgSong = loadSound("tooker to the o.mp3");
   skibidiImg = loadImage("skibidiopp.png");
   treeImg = loadImage("usetree.png");
   oppTexture = loadImage("opp.jpg");
@@ -120,8 +122,9 @@ function setup() {
   graphics.textSize(23.5);
   graphics.fill(255, 255, 0);
   fill(100)
-  graphics.text("lil t is hiding, find him and atomize him f to shoot to save oblock ", graphics.width / 2, graphics.height / 2);
+  graphics.text("lil t is hiding, find him and atomize to save oblock ", graphics.width / 2, graphics.height / 2);
   
+
   // trees.push(new Tree(0, 0, 0)); // Example position
   // trees.push(new Tree(0, 0, 0));
   // Add more as needed
@@ -142,7 +145,7 @@ function draw() {
     textSize(64);
     text("KING VON GAME", width / 2, height / 2 - 60);
     textSize(32);
-    text("Press SPACE to Start", width / 2, height / 2 + 20);
+    text("Press SPACE to Start,W,A,S,D to move and arrow keys to look around", width / 2, height / 2 + 20);
     return; // Pause the game until started
   }
 
@@ -406,12 +409,89 @@ class OppWall {
   }
 }
 
+class Sign {
+  constructor(x, y, z, w = 600, h = 200, message = "") {
+    this.x = x;
+    this.y = y;
+    this.z = z;
+    this.w = w;
+    this.h = h;
+    this.message = message;
+  }
+
+  display() {
+    push();
+    translate(this.x, this.y, this.z);
+    rotateY(PI); // Face the camera if needed
+    fill(60, 40, 20);
+    box(this.w, this.h, 20); // Sign board
+    fill(255, 255, 0);
+    textAlign(CENTER, CENTER);
+    textSize(24);
+    // Draw text on the sign
+    translate(0, 0, 11); // Move text slightly in front of the sign
+    text(this.message, 0, 0, this.w - 40, this.h - 40);
+    pop();
+  }
+}
+
+class WinBlock {
+  constructor(x, y, z, size = 100) {
+    this.x = x;
+    this.y = y;
+    this.z = z;
+    this.size = size;
+    this.active = true;
+  }
+
+  display() {
+    if (!this.active) return;
+    push();
+    translate(this.x, this.y, this.z);
+    fill(0, 255, 0);
+    box(this.size);
+    pop();
+  }
+
+  // Simple 3D hit test: is player close enough and looking at it?
+  isPlayerNear(px, py, pz, maxDist = 150) {
+    let d = dist(px, py, pz, this.x, this.y, this.z);
+    return d < maxDist;
+  }
+}
+
 function keyPressed() {
+  if (!showWinSign && key === 'f') {
+    // Check if player is near the block
+    if (winBlock.isPlayerNear(cam.eyeX, cam.eyeY, cam.eyeZ)) {
+      winBlock.active = false;
+      showWinSign = true;
+    }
+  }
   // Start the game on SPACE
   if (!gameStarted && key === ' '){
     gameStarted = true;
     return;
   }
 
+}
+
+winBlock = new WinBlock(0, 200, 0); // Place at (0,200,0) or wherever you want
+
+if (!showWinSign) {
+  winBlock.display();
+} else {
+  // Draw a "You Win" sign at the same spot
+  push();
+  translate(winBlock.x, winBlock.y, winBlock.z);
+  rotateY(PI); // Face the camera if needed
+  fill(60, 40, 20);
+  box(400, 150, 20);
+  fill(255, 255, 0);
+  textAlign(CENTER, CENTER);
+  textSize(36);
+  translate(0, 0, 21);
+  text("YOU WIN!", 0, 0, 360, 120);
+  pop();
 }
 
